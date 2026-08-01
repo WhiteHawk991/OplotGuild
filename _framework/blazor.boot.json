@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "OplotGuildSite",
   "resources": {
-    "hash": "sha256-aXeqoy7yGq4QFzlMG7l1GRsJFnpWT+UX+WmjpXukZXM=",
+    "hash": "sha256-LUh0dPbj2kR1NopjykhK+gTKx+K47w3AuwnOn9FLHUU=",
     "jsModuleNative": {
       "dotnet.native.js": "sha256-JTswf4CBcNmmrTGm6DppxYNII8GVEmbA3iXD3bU1fcA="
     },
@@ -209,10 +209,10 @@
       "mscorlib.wasm": "sha256-xeIDrsSwymknFihcL/StdwpaVK+g6J8aGdX6I/w8nks=",
       "netstandard.wasm": "sha256-2YXcctv/4R+ape8ngskTBda7MoSFPsNz3L5yF1BhhYs=",
       "System.Private.CoreLib.wasm": "sha256-LctFzHt8SfvxyxBhDh4AeH6+opncXt0QQ0mP1GxgLW8=",
-      "OplotGuildSite.wasm": "sha256-bsZ19RaGt108Mvfwn10Cdszh45iu6onibDGXgIe19zE="
+      "OplotGuildSite.wasm": "sha256-LUqAVyzmQFXWqeAq5OgOlJUXm1NjsOUp6zIAjLKHgmM="
     },
     "pdb": {
-      "OplotGuildSite.pdb": "sha256-kRzLX0DUxdiN+O1CiCMwbWO52a/9q4El30eURXxfQ7U="
+      "OplotGuildSite.pdb": "sha256-uRDhvkQb+LwxNpZIIIIQs2fxcyOAfYC2K9MCfrJ+Uik="
     }
   },
   "cacheBootResources": true,
