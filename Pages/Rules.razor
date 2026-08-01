@@ -1,0 +1,91 @@
+﻿@page "/rules"
+
+<PageTitle>Правила гильдии ОПЛОТ</PageTitle>
+
+<h2 style="color: #c9a84c; border-bottom: 2px solid #c9a84c; padding-bottom: 10px;">📜 Правила гильдии ОПЛОТ</h2>
+
+<div style="background: rgba(26, 26, 46, 0.8); padding: 25px; border-radius: 10px; border: 1px solid #c9a84c; margin: 20px 0;">
+    <ol style="font-size: 1.1rem; line-height: 2;">
+        <li><strong>Честь и уважение:</strong> Играем честно, без читов. Уважаем союзников и противников.</li>
+        <li><strong>Активность:</strong> Минимум 2 совместных рейда в неделю. Если пропускаете — предупреждаем в lolk.</li>
+        <li><strong>Связь:</strong> Обязательное присутствие в голосовом канале lolk во время боевых выходов.</li>
+        <li><strong>Дисциплина:</strong> В бою слушаем капитана или старпома. Своеволие только в разведке.</li>
+        <li><strong>Возраст:</strong> От 18 лет. Молодые мичманы — только по личному поручительству.</li>
+        <li><strong>Взаимопомощь:</strong> Если кто-то в беде (отбился, тонет) — обязаны помочь, даже ценой своего корабля.</li>
+    </ol>
+</div>
+
+<h3 style="color: #c9a84c; margin-top: 30px;">✍️ Подать заявку</h3>
+
+<div style="background: rgba(26, 26, 46, 0.8); padding: 25px; border-radius: 10px; border: 1px solid #c9a84c; max-width: 500px;">
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px;">Ваш ник в WOSB:</label>
+        <input @bind="application.Nickname" style="width: 100%; padding: 8px; background: #0a0a15; color: #e0d6b0; border: 1px solid #c9a84c; border-radius: 5px;" />
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px;">Ваш ник в lolk (Discord):</label>
+        <input @bind="application.DiscordNick" style="width: 100%; padding: 8px; background: #0a0a15; color: #e0d6b0; border: 1px solid #c9a84c; border-radius: 5px;" />
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px;">Основной корабль:</label>
+        <input @bind="application.MainShip" style="width: 100%; padding: 8px; background: #0a0a15; color: #e0d6b0; border: 1px solid #c9a84c; border-radius: 5px;" />
+    </div>
+    <div style="margin-bottom: 15px;">
+        <input type="checkbox" @bind="application.AgreedToRules" style="margin-right: 10px;" />
+        <label>Я ознакомлен(а) и согласен(на) с правилами гильдии</label>
+    </div>
+    <button @onclick="SubmitApplication" style="
+        background: #c9a84c;
+        color: #1a1a2e;
+        font-weight: bold;
+        padding: 12px 30px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 1rem;
+    ">
+        🚀 Отправить заявку
+    </button>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div style="margin-top: 15px; padding: 10px; border-radius: 5px; @(statusMessage.Contains("успешно") ? "background: #2d6a4f; color: #d8f3dc;" : "background: #6a1e1e; color: #ffcccc;")">
+            @statusMessage
+        </div>
+    }
+</div>
+
+@code {
+    private ApplicationForm application = new();
+    private string statusMessage = "";
+
+    private void SubmitApplication()
+    {
+        if (!application.AgreedToRules)
+        {
+            statusMessage = "❌ Вы должны согласиться с правилами!";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(application.Nickname) || string.IsNullOrWhiteSpace(application.DiscordNick))
+        {
+            statusMessage = "❌ Заполните все обязательные поля!";
+            return;
+        }
+
+        // Пока просто имитация отправки
+        statusMessage = "✅ Заявка успешно отправлена! Мы свяжемся с вами в lolk в течение 24 часов.";
+
+        // Очищаем форму (кроме чекбокса)
+        application = new() { AgreedToRules = true };
+    }
+
+    public class ApplicationForm
+    {
+        public string Nickname { get; set; } = "";
+        public string DiscordNick { get; set; } = "";
+        public string MainShip { get; set; } = "";
+        public bool AgreedToRules { get; set; }
+    }
+}
