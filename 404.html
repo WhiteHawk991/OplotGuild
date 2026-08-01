@@ -4,10 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Перенаправление</title>
-    <meta http-equiv="refresh" content="0;url=/" />
+    <base href="/OplotGuild/" />
+    <script>
+        // Перенаправляем на главную страницу с сохранением пути
+        var path = window.location.pathname.replace('/OplotGuild', '');
+        sessionStorage.setItem('redirect', path);
+        window.location.href = '/OplotGuild/';
+    </script>
 </head>
 <body>
     <p>Перенаправление на главную...</p>
-    <a href="/">Нажмите здесь</a>
+    <a href="/OplotGuild/">Нажмите здесь</a>
 </body>
 </html>
