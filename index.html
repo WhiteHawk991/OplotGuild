@@ -25,6 +25,18 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+
+    <script>
+        // Восстанавливаем путь после перенаправления через 404.html
+        (function() {
+            var redirect = sessionStorage.getItem('redirect');
+            if (redirect && redirect !== '' && redirect !== '/') {
+                sessionStorage.removeItem('redirect');
+                // Используем History API, чтобы заменить текущий URL на целевой
+                history.replaceState(null, '', redirect);
+            }
+        })();
+    </script>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
 
