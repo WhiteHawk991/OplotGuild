@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* Все стили остаются без изменений, добавляем только новые для загрузки файлов */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -173,11 +172,20 @@
         .build-card p {
             color: #b8a88a;
             line-height: 1.6;
+            margin: 8px 0;
         }
         .build-card .author {
             color: #6a6a7e;
             font-size: 0.9rem;
             margin-top: 10px;
+        }
+        .build-card img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #2a2a3e;
         }
         .toggle-form-btn {
             background: transparent;
@@ -205,10 +213,15 @@
             border: 1px solid #c9a84c;
             display: none;
         }
+        .empty-message {
+            color: #6a6a7e;
+            font-size: 1.1rem;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <!-- МЕНЮ (без изменений) -->
+    <!-- МЕНЮ -->
     <nav style="display: flex; justify-content: center; gap: 30px; padding: 15px 20px; background: rgba(10, 10, 21, 0.9); border-bottom: 2px solid #c9a84c; margin-bottom: 20px; flex-wrap: wrap;">
         <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🏠 Главная</a>
         <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📜 Правила</a>
@@ -269,14 +282,8 @@
                 </div>
                 
                 <div id="buildsList" class="builds-grid">
-                    <div class="build-card">
-                        <h3>⚓ Пример билда</h3>
-                        <p><strong>Тип:</strong> Боевой</p>
-                        <p><strong>Вооружение:</strong> 42-фунтовые карронады</p>
-                        <p><strong>Апгрейды:</strong> Усиленные паруса</p>
-                        <p><strong>Описание:</strong> Отличный билд для дальнего боя</p>
-                        <div class="author">Автор: Kapitan_Oplot</div>
-                    </div>
+                    <!-- Сюда будут подгружаться билды из JSON -->
+                    <div class="empty-message">⏳ Загрузка билдов...</div>
                 </div>
                 
                 <button onclick="logout()" class="btn-logout">🚪 Выйти (забыть пароль)</button>
@@ -309,6 +316,7 @@
         window.onload = function() {
             if (localStorage.getItem(STORAGE_KEY) === 'true') {
                 showContent();
+                loadBuilds();
             }
         };
 
@@ -320,6 +328,7 @@
             if (input === CORRECT_PASSWORD) {
                 localStorage.setItem(STORAGE_KEY, 'true');
                 showContent();
+                loadBuilds();
             } else {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -358,6 +367,47 @@
             }
         }
 
+        // ==================== ЗАГРУЗКА БИЛДОВ ИЗ JSON ====================
+        function loadBuilds() {
+            var container = document.getElementById('buildsList');
+            container.innerHTML = '<div class="empty-message">⏳ Загрузка билдов...</div>';
+
+            fetch('builds.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Файл builds.json не найден');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    container.innerHTML = '';
+                    if (!data.builds || data.builds.length === 0) {
+                        container.innerHTML = '<div class="empty-message">📭 Пока нет билдов. Станьте первым!</div>';
+                        return;
+                    }
+                    data.builds.forEach(function(build) {
+                        var card = document.createElement('div');
+                        card.className = 'build-card';
+                        var imageHtml = build.imageUrl ? `<img src="${build.imageUrl}" alt="${build.shipName}" />` : '';
+                        card.innerHTML = `
+                            ${imageHtml}
+                            <h3>⚓ ${build.shipName}</h3>
+                            <p><strong>Тип:</strong> ${build.shipType}</p>
+                            <p><strong>⚔️ Вооружение:</strong> ${build.armament || 'Не указано'}</p>
+                            <p><strong>Апгрейды:</strong> ${build.upgrades || 'Не указаны'}</p>
+                            <p><strong>Описание:</strong> ${build.description}</p>
+                            <div class="author">✍️ Автор: ${build.author}</div>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки билдов:', error);
+                    container.innerHTML = '<div class="empty-message">⚠️ Не удалось загрузить билды. Проверьте наличие файла builds.json.</div>';
+                });
+        }
+        // =======================================================
+
         function submitBuild(event) {
             event.preventDefault();
 
@@ -379,7 +429,6 @@
                 return;
             }
 
-            // Проверка размера файла (10 МБ)
             if (file && file.size > 10 * 1024 * 1024) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -387,15 +436,10 @@
                 return;
             }
 
-            // Подготавливаем FormData
             var formData = new FormData();
-            
-            // Формируем текстовое содержимое
             var content = `**📝 Предложен новый билд!**\n\n**Корабль:** ${shipName}\n**Тип:** ${shipType}\n**Автор:** ${author}\n**Вооружение:** ${armament || 'Не указано'}\n**Апгрейды:** ${upgrades || 'Не указаны'}\n**Описание:** ${description}`;
-            
             formData.append('content', content);
 
-            // Если есть ссылка на картинку, добавляем её как embed
             if (imageUrl) {
                 var embed = {
                     title: "⚓ " + shipName,
@@ -413,12 +457,10 @@
                 formData.append('embeds', JSON.stringify([embed]));
             }
 
-            // Если есть файл, добавляем его
             if (file) {
                 formData.append('files[0]', file);
             }
 
-            // Отправка на вебхук
             fetch(WEBHOOK_URL, {
                 method: 'POST',
                 body: formData
