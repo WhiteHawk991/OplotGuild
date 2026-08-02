@@ -1,4 +1,5 @@
-﻿@page "/"
+@page "/"
+@inject NavigationManager NavigationManager
 
 <PageTitle>ОПЛОТ — Гильдия WOSB</PageTitle>
 
@@ -31,7 +32,8 @@
             «Победа — это когда все вернулись домой».
         </p>
     </div>
-    <a href="/OplotGuild/rules" class="btn" style="
+    
+    <button @onclick="GoToRules" class="btn" style="
         margin-top: 30px;
         padding: 15px 40px;
         background: #c9a84c;
@@ -43,7 +45,15 @@
         transition: all 0.3s;
         border: 2px solid #e0d6b0;
         display: inline-block;
+        cursor: pointer;
     ">
         ⚔️ Вступить в ряды
-    </a>
+    </button>
 </div>
+
+@code {
+    private void GoToRules()
+    {
+        NavigationManager.NavigateTo("/OplotGuild/rules");
+    }
+}
