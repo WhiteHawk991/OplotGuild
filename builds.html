@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
+        /* Все стили остаются без изменений, добавляем только новые для image-поля */
+        .form-box input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a15;
+            color: #e0d6b0;
+            border: 1px solid #c9a84c;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+        /* Остальные стили такие же, как в предыдущей версии */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -55,6 +67,7 @@
             color: #c9a84c;
         }
         .form-box input[type="text"],
+        .form-box input[type="url"],
         .form-box textarea,
         .form-box select {
             width: 100%;
@@ -216,11 +229,17 @@
                                 <option value="Осадный">Осадный</option>
                             </select>
                             
+                            <label for="armament">⚔️ Вооружение (пушки)</label>
+                            <textarea id="armament" placeholder="Какие пушки установлены? Например: 42-фунтовые карронады, дальнобойные пушки"></textarea>
+                            
                             <label for="upgrades">Апгрейды</label>
                             <textarea id="upgrades" placeholder="Перечислите установленные апгрейды"></textarea>
                             
                             <label for="description">Почему этот билд крут?</label>
                             <textarea id="description" required placeholder="Краткое описание тактики"></textarea>
+                            
+                            <label for="imageUrl">🖼️ Ссылка на картинку (необязательно)</label>
+                            <input type="url" id="imageUrl" placeholder="Вставьте ссылку на скриншот (например, с Imgur)" />
                             
                             <label for="author">Ваш ник в WOSB</label>
                             <input type="text" id="author" required placeholder="Ваш игровой ник" />
@@ -232,10 +251,10 @@
                 </div>
                 
                 <div id="buildsList" class="builds-grid">
-                    <!-- Сюда будут подгружаться билды (пока заглушка) -->
                     <div class="build-card">
                         <h3>⚓ Пример билда</h3>
                         <p><strong>Тип:</strong> Боевой</p>
+                        <p><strong>Вооружение:</strong> 42-фунтовые карронады, дальнобойные пушки</p>
                         <p><strong>Апгрейды:</strong> Усиленные паруса, дальнобойные пушки</p>
                         <p><strong>Описание:</strong> Отличный билд для дальнего боя</p>
                         <div class="author">Автор: Kapitan_Oplot</div>
@@ -310,11 +329,14 @@
 
             var shipName = document.getElementById('shipName').value.trim();
             var shipType = document.getElementById('shipType').value;
+            var armament = document.getElementById('armament').value.trim();
             var upgrades = document.getElementById('upgrades').value.trim();
             var description = document.getElementById('description').value.trim();
+            var imageUrl = document.getElementById('imageUrl').value.trim();
             var author = document.getElementById('author').value.trim();
             var messageDiv = document.getElementById('buildMessage');
 
+            // Проверка обязательных полей
             if (!shipName || !shipType || !description || !author) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -322,21 +344,31 @@
                 return;
             }
 
-            var payload = {
-                content: "**📝 Предложен новый билд!**",
-                embeds: [{
-                    title: "⚓ " + shipName,
-                    color: 0xc9a84c,
-                    fields: [
-                        { name: "Тип корабля", value: shipType, inline: true },
-                        { name: "Автор", value: author, inline: true },
-                        { name: "Апгрейды", value: upgrades || "Не указаны", inline: false },
-                        { name: "Описание", value: description, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
+            // Формируем payload
+            var embed = {
+                title: "⚓ " + shipName,
+                color: 0xc9a84c,
+                fields: [
+                    { name: "Тип корабля", value: shipType, inline: true },
+                    { name: "Автор", value: author, inline: true },
+                    { name: "⚔️ Вооружение", value: armament || "Не указано", inline: false },
+                    { name: "Апгрейды", value: upgrades || "Не указаны", inline: false },
+                    { name: "Описание", value: description, inline: false }
+                ],
+                timestamp: new Date().toISOString()
             };
 
+            // Если есть ссылка на картинку, добавляем её в embed
+            if (imageUrl) {
+                embed.image = { url: imageUrl };
+            }
+
+            var payload = {
+                content: "**📝 Предложен новый билд!**",
+                embeds: [embed]
+            };
+
+            // Отправка на вебхук
             fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
