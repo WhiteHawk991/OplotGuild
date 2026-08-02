@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Правила гильдии ОПЛОТ</title>
+    <base href="/OplotGuild/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+        body {
+            background: #0a0a15;
+            color: #e0d6b0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #c9a84c;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 10px;
+        }
+        .rules-box {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            margin: 20px 0;
+        }
+        .rules-box ol {
+            font-size: 1.1rem;
+            line-height: 2;
+        }
+        .rules-box ol li strong {
+            color: #c9a84c;
+        }
+        .form-box {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            max-width: 500px;
+        }
+        .form-box input[type="text"],
+        .form-box input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            background: #0a0a15;
+            color: #e0d6b0;
+            border: 1px solid #c9a84c;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .form-box label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-box .checkbox-label {
+            display: inline;
+            margin-left: 10px;
+        }
+        .btn-submit {
+            background: #c9a84c;
+            color: #1a1a2e;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        .btn-submit:hover {
+            background: #e0d6b0;
+            transform: scale(1.05);
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message.success {
+            background: #2d6a4f;
+            color: #d8f3dc;
+        }
+        .message.error {
+            background: #6a1e1e;
+            color: #ffcccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>📜 Правила гильдии ОПЛОТ</h2>
+
+        <div class="rules-box">
+            <ol>
+                <li><strong>Честь и уважение:</strong> Играем честно, без читов. Уважаем союзников и противников.</li>
+                <li><strong>Активность:</strong> Минимум 2 совместных рейда в неделю. Если пропускаете — предупреждаем в lolk.</li>
+                <li><strong>Связь:</strong> Обязательное присутствие в голосовом канале lolk во время боевых выходов.</li>
+                <li><strong>Дисциплина:</strong> В бою слушаем капитана или старпома. Своеволие только в разведке.</li>
+                <li><strong>Возраст:</strong> От 18 лет. Молодые мичманы — только по личному поручительству.</li>
+                <li><strong>Взаимопомощь:</strong> Если кто-то в беде (отбился, тонет) — обязаны помочь, даже ценой своего корабля.</li>
+            </ol>
+        </div>
+
+        <h3 style="color: #c9a84c; margin-top: 30px;">✍️ Подать заявку</h3>
+
+        <div class="form-box">
+            <form id="applicationForm" onsubmit="submitForm(event)">
+                <label>Ваш ник в WOSB:</label>
+                <input type="text" id="nickname" required />
+
+                <label>Ваш ник в lolk (Discord):</label>
+                <input type="text" id="discordNick" required />
+
+                <label>Основной корабль:</label>
+                <input type="text" id="mainShip" />
+
+                <input type="checkbox" id="agreed" required />
+                <label class="checkbox-label">Я ознакомлен(а) и согласен(на) с правилами гильдии</label>
+
+                <br /><br />
+                <button type="submit" class="btn-submit">🚀 Отправить заявку</button>
+            </form>
+
+            <div id="message" class="message" style="display: none;"></div>
+        </div>
+
+        <a href="/OplotGuild/" class="btn-back">← На главную</a>
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+
+            var nickname = document.getElementById('nickname').value.trim();
+            var discordNick = document.getElementById('discordNick').value.trim();
+            var mainShip = document.getElementById('mainShip').value.trim();
+            var agreed = document.getElementById('agreed').checked;
+            var messageDiv = document.getElementById('message');
+
+            if (!nickname || !discordNick) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Заполните все обязательные поля!';
+                return;
+            }
+
+            if (!agreed) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Вы должны согласиться с правилами!';
+                return;
+            }
+
+            // Здесь можно отправить данные на сервер (например, через fetch)
+            // Пока просто показываем успех
+            messageDiv.style.display = 'block';
+            messageDiv.className = 'message success';
+            messageDiv.textContent = '✅ Заявка успешно отправлена! Мы свяжемся с вами в lolk в течение 24 часов.';
+
+            // Очищаем форму (кроме чекбокса)
+            document.getElementById('nickname').value = '';
+            document.getElementById('discordNick').value = '';
+            document.getElementById('mainShip').value = '';
+            document.getElementById('agreed').checked = false;
+        }
+    </script>
+</body>
+
+</html>
