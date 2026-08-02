@@ -27,6 +27,18 @@
     </div>
 
     <script>
+        // Перехватываем все неизвестные пути и перенаправляем на главную
+        (function() {
+            var path = window.location.pathname;
+            // Проверяем, что это не запрос к файлу (содержит точку и расширение)
+            if (path !== '/' && path !== '/OplotGuild/' && !path.match(/\.[a-zA-Z0-9]+$/)) {
+                sessionStorage.setItem('redirect', path);
+                window.location.href = '/OplotGuild/';
+            }
+        })();
+    </script>
+
+    <script>
         // Восстанавливаем путь после перенаправления через 404.html
         (function() {
             var redirect = sessionStorage.getItem('redirect');
