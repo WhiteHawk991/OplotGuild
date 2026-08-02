@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* все стили остаются без изменений */
+        /* Стили страницы */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -160,7 +160,7 @@
                 <label>Ваш ник в WOSB:</label>
                 <input type="text" id="nickname" required />
 
-                <label>Ваш ник в Lolk (Discord):</label>
+                <label>Ваш ник в Lolk:</label>
                 <input type="text" id="discordNick" required />
 
                 <label>👉 Ваш ранг в WOSB (Капитан/Старпом/Мичман и т.д.):</label>
@@ -178,6 +178,9 @@
     </div>
 
     <script>
+        // URL вебхука Lolk
+        var webhookUrl = "https://lolka.app/api/webhooks/819153661936640/ODE5MTUzNjYxOTM2NjQw.kj6o0Hyh33V7p15sglL-tABDQJ7vFgHTkMamcvTuPSA";
+
         function submitForm(event) {
             event.preventDefault();
 
@@ -187,27 +190,66 @@
             var agreed = document.getElementById('agreed').checked;
             var messageDiv = document.getElementById('message');
 
+            // --- Валидация ---
             if (!nickname || !discordNick) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ Заполните все обязательные поля!';
+                showMessage(messageDiv, '❌ Заполните все обязательные поля!', 'error');
                 return;
             }
 
             if (!agreed) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ Вы должны согласиться с правилами!';
+                showMessage(messageDiv, '❌ Вы должны согласиться с правилами!', 'error');
                 return;
             }
 
-            // Здесь будет отправка в Lolk (настраивается отдельно)
-            // Пока просто имитация успеха
-            messageDiv.style.display = 'block';
-            messageDiv.className = 'message success';
-            messageDiv.textContent = '✅ Заявка успешно отправлена! Мы свяжемся с вами в Lolk в течение 24 часов.';
+            // --- Формируем данные для отправки ---
+            var payload = {
+                content: "**📝 Новая заявка в гильдию ОПЛОТ!**",
+                embeds: [{
+                    title: "Данные кандидата",
+                    color: 0xc9a84c, // Золотой цвет
+                    fields: [
+                        { name: "👤 Ник в WOSB", value: nickname || "Не указан", inline: true },
+                        { name: "💬 Ник в Lolk", value: discordNick || "Не указан", inline: true },
+                        { name: "⚓ Ранг в WOSB", value: rank || "Не указан", inline: false }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
 
-            // Очищаем форму (кроме чекбокса)
+            // --- Отправка в Lolk ---
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.ok) {
+                    showMessage(messageDiv, '✅ Заявка успешно отправлена! Мы свяжемся с вами в Lolk в течение 24 часов.', 'success');
+                    resetForm();
+                } else {
+                    // Если Lolk вернул ошибку, пробуем прочитать текст
+                    return response.text().then(text => {
+                        throw new Error(`Ошибка сервера (${response.status}): ${text}`);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка отправки:', error);
+                showMessage(messageDiv, `❌ Не удалось отправить заявку. Ошибка: ${error.message || 'Попробуйте позже или свяжитесь с нами вручную.'}`, 'error');
+            });
+        }
+
+        // Вспомогательная функция для показа сообщений
+        function showMessage(element, text, type) {
+            element.style.display = 'block';
+            element.className = 'message ' + type;
+            element.textContent = text;
+        }
+
+        // Вспомогательная функция для очистки формы
+        function resetForm() {
             document.getElementById('nickname').value = '';
             document.getElementById('discordNick').value = '';
             document.getElementById('rank').value = '';
