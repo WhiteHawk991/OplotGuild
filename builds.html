@@ -208,11 +208,12 @@
                             <label for="shipType">Тип корабля</label>
                             <select id="shipType" required>
                                 <option value="">Выберите тип</option>
-                                <option value="Линкор">Линкор</option>
-                                <option value="Фрегат">Фрегат</option>
-                                <option value="Корвет">Корвет</option>
-                                <option value="Бриг">Бриг</option>
-                                <option value="Шхуна">Шхуна</option>
+                                <option value="Торговый">Торговый</option>
+                                <option value="Быстроходный">Быстроходный</option>
+                                <option value="Боевой">Боевой</option>
+                                <option value="Имперский">Имперский</option>
+                                <option value="Тяжелый">Тяжелый</option>
+                                <option value="Осадный">Осадный</option>
                             </select>
                             
                             <label for="upgrades">Апгрейды</label>
@@ -234,7 +235,7 @@
                     <!-- Сюда будут подгружаться билды (пока заглушка) -->
                     <div class="build-card">
                         <h3>⚓ Пример билда</h3>
-                        <p><strong>Тип:</strong> Линкор</p>
+                        <p><strong>Тип:</strong> Боевой</p>
                         <p><strong>Апгрейды:</strong> Усиленные паруса, дальнобойные пушки</p>
                         <p><strong>Описание:</strong> Отличный билд для дальнего боя</p>
                         <div class="author">Автор: Kapitan_Oplot</div>
@@ -268,7 +269,6 @@
         const WEBHOOK_URL = "https://lolka.app/api/webhooks/819395686533120/ODE5Mzk1Njg2NTMzMTIw.5QpOxqPbAtxe3mR3waM98b3SgSoXof2AmF-PeSycKwI";
         // =================================================
 
-        // Проверка пароля при загрузке
         window.onload = function() {
             if (localStorage.getItem(STORAGE_KEY) === 'true') {
                 showContent();
@@ -300,13 +300,11 @@
             location.reload();
         }
 
-        // Показать/скрыть форму
         function toggleForm() {
             var form = document.getElementById('buildForm');
             form.classList.toggle('hidden');
         }
 
-        // Отправка билда в Lolk
         function submitBuild(event) {
             event.preventDefault();
 
@@ -317,7 +315,6 @@
             var author = document.getElementById('author').value.trim();
             var messageDiv = document.getElementById('buildMessage');
 
-            // Проверка обязательных полей
             if (!shipName || !shipType || !description || !author) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -325,7 +322,6 @@
                 return;
             }
 
-            // Формируем payload
             var payload = {
                 content: "**📝 Предложен новый билд!**",
                 embeds: [{
@@ -341,7 +337,6 @@
                 }]
             };
 
-            // Отправка на вебхук
             fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -353,7 +348,6 @@
                     messageDiv.className = 'message success';
                     messageDiv.textContent = '✅ Билд успешно отправлен! Спасибо за вклад в развитие гильдии.';
                     document.getElementById('buildSubmissionForm').reset();
-                    // Скрываем форму через 3 секунды
                     setTimeout(() => {
                         document.getElementById('buildForm').classList.add('hidden');
                     }, 3000);
