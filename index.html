@@ -13,11 +13,7 @@
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <!-- Здесь будет ваше приложение -->
     </div>
 
     <div id="blazor-error-ui">
@@ -26,13 +22,29 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <!-- ВРЕМЕННАЯ КНОПКА ДЛЯ ПРОВЕРКИ -->
+    <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;">
+        <a href="/OplotGuild/rules" class="btn" style="
+            padding: 15px 40px;
+            background: #c9a84c;
+            color: #1a1a2e;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            border: 2px solid #e0d6b0;
+            display: inline-block;
+        ">
+            ⚔️ Вступить в ряды (временная)
+        </a>
+    </div>
+
     <script>
         // Восстанавливаем путь после перенаправления через 404.html
         (function() {
             var redirect = sessionStorage.getItem('redirect');
             if (redirect && redirect !== '' && redirect !== '/') {
                 sessionStorage.removeItem('redirect');
-                // Используем History API, чтобы заменить текущий URL на целевой
                 history.replaceState(null, '', redirect);
             }
         })();
