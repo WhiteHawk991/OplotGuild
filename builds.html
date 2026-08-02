@@ -9,18 +9,7 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* Все стили остаются без изменений, добавляем только новые для image-поля */
-        .form-box input[type="url"] {
-            width: 100%;
-            padding: 10px;
-            background: #0a0a15;
-            color: #e0d6b0;
-            border: 1px solid #c9a84c;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-family: inherit;
-        }
-        /* Остальные стили такие же, как в предыдущей версии */
+        /* Все стили остаются без изменений, добавляем только новые для загрузки файлов */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -68,6 +57,7 @@
         }
         .form-box input[type="text"],
         .form-box input[type="url"],
+        .form-box input[type="file"],
         .form-box textarea,
         .form-box select {
             width: 100%;
@@ -78,6 +68,22 @@
             border-radius: 5px;
             margin-bottom: 15px;
             font-family: inherit;
+        }
+        .form-box input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .form-box input[type="file"]::file-selector-button {
+            background: #c9a84c;
+            color: #0a0a15;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .form-box input[type="file"]::file-selector-button:hover {
+            background: #e0d6b0;
         }
         .form-box textarea {
             min-height: 80px;
@@ -191,10 +197,18 @@
         .hidden {
             display: none;
         }
+        #filePreview {
+            margin-top: 10px;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid #c9a84c;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- МЕНЮ -->
+    <!-- МЕНЮ (без изменений) -->
     <nav style="display: flex; justify-content: center; gap: 30px; padding: 15px 20px; background: rgba(10, 10, 21, 0.9); border-bottom: 2px solid #c9a84c; margin-bottom: 20px; flex-wrap: wrap;">
         <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🏠 Главная</a>
         <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📜 Правила</a>
@@ -214,7 +228,7 @@
                 <div id="buildForm" class="hidden">
                     <div class="form-box">
                         <h3 style="color: #c9a84c; text-align: center; margin-top: 0;">Новый билд</h3>
-                        <form id="buildSubmissionForm" onsubmit="submitBuild(event)">
+                        <form id="buildSubmissionForm" onsubmit="submitBuild(event)" enctype="multipart/form-data">
                             <label for="shipName">Название корабля</label>
                             <input type="text" id="shipName" required placeholder="Например: Святой Пётр" />
                             
@@ -230,7 +244,7 @@
                             </select>
                             
                             <label for="armament">⚔️ Вооружение (пушки)</label>
-                            <textarea id="armament" placeholder="Какие пушки установлены? Например: 42-фунтовые карронады, дальнобойные пушки"></textarea>
+                            <textarea id="armament" placeholder="Какие пушки установлены? Например: 42-фунтовые карронады"></textarea>
                             
                             <label for="upgrades">Апгрейды</label>
                             <textarea id="upgrades" placeholder="Перечислите установленные апгрейды"></textarea>
@@ -238,8 +252,12 @@
                             <label for="description">Почему этот билд крут?</label>
                             <textarea id="description" required placeholder="Краткое описание тактики"></textarea>
                             
-                            <label for="imageUrl">🖼️ Ссылка на картинку (необязательно)</label>
-                            <input type="url" id="imageUrl" placeholder="Вставьте ссылку на скриншот (например, с Imgur)" />
+                            <label for="imageFile">🖼️ Загрузить скриншот (до 10 МБ)</label>
+                            <input type="file" id="imageFile" accept="image/*" onchange="previewFile(event)" />
+                            <img id="filePreview" alt="Предпросмотр" />
+                            
+                            <label for="imageUrl">Или вставьте ссылку на картинку (необязательно)</label>
+                            <input type="url" id="imageUrl" placeholder="Ссылка на Imgur, PostImages и т.д." />
                             
                             <label for="author">Ваш ник в WOSB</label>
                             <input type="text" id="author" required placeholder="Ваш игровой ник" />
@@ -254,8 +272,8 @@
                     <div class="build-card">
                         <h3>⚓ Пример билда</h3>
                         <p><strong>Тип:</strong> Боевой</p>
-                        <p><strong>Вооружение:</strong> 42-фунтовые карронады, дальнобойные пушки</p>
-                        <p><strong>Апгрейды:</strong> Усиленные паруса, дальнобойные пушки</p>
+                        <p><strong>Вооружение:</strong> 42-фунтовые карронады</p>
+                        <p><strong>Апгрейды:</strong> Усиленные паруса</p>
                         <p><strong>Описание:</strong> Отличный билд для дальнего боя</p>
                         <div class="author">Автор: Kapitan_Oplot</div>
                     </div>
@@ -283,7 +301,7 @@
 
     <script>
         // ==================== НАСТРОЙКИ ====================
-        const CORRECT_PASSWORD = "oplot2026"; // СМЕНИТЕ ПАРОЛЬ!
+        const CORRECT_PASSWORD = "oplot2026";
         const STORAGE_KEY = "oplot_builds_authorized";
         const WEBHOOK_URL = "https://lolka.app/api/webhooks/819395686533120/ODE5Mzk1Njg2NTMzMTIw.5QpOxqPbAtxe3mR3waM98b3SgSoXof2AmF-PeSycKwI";
         // =================================================
@@ -324,6 +342,22 @@
             form.classList.toggle('hidden');
         }
 
+        function previewFile(event) {
+            var preview = document.getElementById('filePreview');
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+        }
+
         function submitBuild(event) {
             event.preventDefault();
 
@@ -334,9 +368,10 @@
             var description = document.getElementById('description').value.trim();
             var imageUrl = document.getElementById('imageUrl').value.trim();
             var author = document.getElementById('author').value.trim();
+            var fileInput = document.getElementById('imageFile');
+            var file = fileInput.files[0];
             var messageDiv = document.getElementById('buildMessage');
 
-            // Проверка обязательных полей
             if (!shipName || !shipType || !description || !author) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -344,35 +379,49 @@
                 return;
             }
 
-            // Формируем payload
-            var embed = {
-                title: "⚓ " + shipName,
-                color: 0xc9a84c,
-                fields: [
-                    { name: "Тип корабля", value: shipType, inline: true },
-                    { name: "Автор", value: author, inline: true },
-                    { name: "⚔️ Вооружение", value: armament || "Не указано", inline: false },
-                    { name: "Апгрейды", value: upgrades || "Не указаны", inline: false },
-                    { name: "Описание", value: description, inline: false }
-                ],
-                timestamp: new Date().toISOString()
-            };
-
-            // Если есть ссылка на картинку, добавляем её в embed
-            if (imageUrl) {
-                embed.image = { url: imageUrl };
+            // Проверка размера файла (10 МБ)
+            if (file && file.size > 10 * 1024 * 1024) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Файл слишком большой! Максимальный размер — 10 МБ.';
+                return;
             }
 
-            var payload = {
-                content: "**📝 Предложен новый билд!**",
-                embeds: [embed]
-            };
+            // Подготавливаем FormData
+            var formData = new FormData();
+            
+            // Формируем текстовое содержимое
+            var content = `**📝 Предложен новый билд!**\n\n**Корабль:** ${shipName}\n**Тип:** ${shipType}\n**Автор:** ${author}\n**Вооружение:** ${armament || 'Не указано'}\n**Апгрейды:** ${upgrades || 'Не указаны'}\n**Описание:** ${description}`;
+            
+            formData.append('content', content);
+
+            // Если есть ссылка на картинку, добавляем её как embed
+            if (imageUrl) {
+                var embed = {
+                    title: "⚓ " + shipName,
+                    color: 0xc9a84c,
+                    fields: [
+                        { name: "Тип", value: shipType, inline: true },
+                        { name: "Автор", value: author, inline: true },
+                        { name: "Вооружение", value: armament || "Не указано", inline: false },
+                        { name: "Апгрейды", value: upgrades || "Не указаны", inline: false },
+                        { name: "Описание", value: description, inline: false }
+                    ],
+                    image: { url: imageUrl },
+                    timestamp: new Date().toISOString()
+                };
+                formData.append('embeds', JSON.stringify([embed]));
+            }
+
+            // Если есть файл, добавляем его
+            if (file) {
+                formData.append('files[0]', file);
+            }
 
             // Отправка на вебхук
             fetch(WEBHOOK_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: formData
             })
             .then(response => {
                 if (response.ok) {
@@ -380,6 +429,7 @@
                     messageDiv.className = 'message success';
                     messageDiv.textContent = '✅ Билд успешно отправлен! Спасибо за вклад в развитие гильдии.';
                     document.getElementById('buildSubmissionForm').reset();
+                    document.getElementById('filePreview').style.display = 'none';
                     setTimeout(() => {
                         document.getElementById('buildForm').classList.add('hidden');
                     }, 3000);
