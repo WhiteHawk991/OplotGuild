@@ -202,28 +202,25 @@
             }
 
             // --- Формируем данные для отправки ---
-            var payload = {
-                content: "**📝 Новая заявка в гильдию ОПЛОТ!**",
-                embeds: [{
-                    title: "Данные кандидата",
-                    color: 0xc9a84c, // Золотой цвет
-                    fields: [
-                        { name: "👤 Ник в WOSB", value: nickname || "Не указан", inline: true },
-                        { name: "💬 Ник в Lolk", value: discordNick || "Не указан", inline: true },
-                        { name: "⚓ Ранг в WOSB", value: rank || "Не указан", inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
-            };
+          var payload = {
+    content: "📝 **Новая заявка в гильдию ОПЛОТ!**", // ОБЯЗАТЕЛЬНО: content
+    embeds: [{
+        title: "Данные кандидата",
+        color: 0xc9a84c,
+        fields: [
+            { name: "👤 Ник в WOSB", value: nickname || "Не указан", inline: true },
+            { name: "💬 Ник в Lolk", value: discordNick || "Не указан", inline: true },
+            { name: "⚓ Ранг в WOSB", value: rank || "Не указан", inline: false }
+        ],
+        timestamp: new Date().toISOString()
+    }]
+};
 
-            // --- Отправка в Lolk ---
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
+fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+})
             .then(response => {
                 if (response.ok) {
                     showMessage(messageDiv, '✅ Заявка успешно отправлена! Мы свяжемся с вами в Lolk в течение 24 часов.', 'success');
