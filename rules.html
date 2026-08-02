@@ -14,11 +14,13 @@
             background: #0a0a15;
             color: #e0d6b0;
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            padding: 40px 20px;
+            padding: 0;
+            margin: 0;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
         }
         h2 {
             color: #c9a84c;
@@ -111,6 +113,31 @@
 </head>
 
 <body>
+    <!-- МЕНЮ -->
+    <nav style="
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding: 15px 20px;
+        background: rgba(10, 10, 21, 0.9);
+        border-bottom: 2px solid #c9a84c;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    ">
+        <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
+            🏠 Главная
+        </a>
+        <a href="/OplotGuild/rules.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">
+            📜 Правила
+        </a>
+        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
+            ⚓ Билды 🔒
+        </a>
+        <a href="/OplotGuild/tips.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
+            📖 Советы 🔒
+        </a>
+    </nav>
+
     <div class="container">
         <h2>📜 Правила гильдии ОПЛОТ</h2>
 
@@ -147,8 +174,6 @@
 
             <div id="message" class="message" style="display: none;"></div>
         </div>
-
-        <a href="/OplotGuild/" class="btn-back">← На главную</a>
     </div>
 
     <script>
