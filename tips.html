@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -40,43 +39,117 @@
             font-size: 1.2rem;
             color: #b8a88a;
         }
+        .form-box {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .form-box input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a15;
+            color: #e0d6b0;
+            border: 1px solid #c9a84c;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .btn-submit {
+            background: #c9a84c;
+            color: #1a1a2e;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        .btn-submit:hover {
+            background: #e0d6b0;
+            transform: scale(1.05);
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message.error {
+            background: #6a1e1e;
+            color: #ffcccc;
+        }
     </style>
 </head>
-
 <body>
     <!-- МЕНЮ -->
-    <nav style="
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        padding: 15px 20px;
-        background: rgba(10, 10, 21, 0.9);
-        border-bottom: 2px solid #c9a84c;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    ">
-        <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            🏠 Главная
-        </a>
-        <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            📜 Правила
-        </a>
-        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            ⚓ Билды 🔒
-        </a>
-        <a href="/OplotGuild/tips.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">
-            📖 Советы 🔒
-        </a>
+    <nav style="display: flex; justify-content: center; gap: 30px; padding: 15px 20px; background: rgba(10, 10, 21, 0.9); border-bottom: 2px solid #c9a84c; margin-bottom: 20px; flex-wrap: wrap;">
+        <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🏠 Главная</a>
+        <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📜 Правила</a>
+        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">⚓ Билды 🔒</a>
+        <a href="/OplotGuild/tips.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">📖 Советы 🔒</a>
     </nav>
 
     <div class="container">
-        <div class="message-box">
-            <div class="lock-icon">🔒</div>
-            <h2>📖 Полезные советы</h2>
-            <p>Раздел временно закрыт. Доступ только для членов гильдии.</p>
-            <p style="font-size: 1rem; color: #6a6a7e; margin-top: 10px;">Авторизация через lolk будет добавлена в ближайшее время.</p>
+        <div id="content-protected" style="display: none;">
+            <!-- Содержимое, которое показывается ПОСЛЕ ввода пароля -->
+            <div class="message-box">
+                <div class="lock-icon">📖</div>
+                <h2>Полезные советы</h2>
+                <p>Здесь будут отображаться полезные советы для участников гильдии.</p>
+                <p style="font-size: 1rem; color: #6a6a7e; margin-top: 10px;">Скоро здесь появится контент.</p>
+            </div>
+        </div>
+
+        <div id="password-form">
+            <div class="message-box">
+                <div class="lock-icon">🔒</div>
+                <h2>Доступ к советам</h2>
+                <p>Этот раздел доступен только членам гильдии.</p>
+                <div class="form-box">
+                    <form id="passwordForm" onsubmit="checkPassword(event)">
+                        <input type="password" id="passwordInput" placeholder="Введите пароль" required />
+                        <button type="submit" class="btn-submit">Войти</button>
+                    </form>
+                    <div id="passwordMessage" class="message" style="display: none;"></div>
+                </div>
+            </div>
         </div>
     </div>
-</body>
 
+    <script>
+        const CORRECT_PASSWORD = "oplot2026"; // СМЕНИТЕ ПАРОЛЬ!
+
+        function checkPassword(event) {
+            event.preventDefault();
+            var input = document.getElementById('passwordInput').value;
+            var messageDiv = document.getElementById('passwordMessage');
+
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById('password-form').style.display = 'none';
+                document.getElementById('content-protected').style.display = 'block';
+            } else {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Неверный пароль. Попробуйте снова.';
+            }
+        }
+    </script>
+</body>
 </html>
