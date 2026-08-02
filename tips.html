@@ -71,6 +71,23 @@
             background: #e0d6b0;
             transform: scale(1.05);
         }
+        .btn-logout {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            background: transparent;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .btn-logout:hover {
+            background: #ff6b6b;
+            color: #0a0a15;
+        }
         .btn-back {
             display: inline-block;
             margin-top: 20px;
@@ -95,6 +112,27 @@
             background: #6a1e1e;
             color: #ffcccc;
         }
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tip-card {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            text-align: left;
+        }
+        .tip-card h3 {
+            color: #c9a84c;
+            margin-top: 0;
+        }
+        .tip-card p {
+            color: #b8a88a;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -108,12 +146,31 @@
 
     <div class="container">
         <div id="content-protected" style="display: none;">
-            <!-- Содержимое, которое показывается ПОСЛЕ ввода пароля -->
             <div class="message-box">
                 <div class="lock-icon">📖</div>
                 <h2>Полезные советы</h2>
-                <p>Здесь будут отображаться полезные советы для участников гильдии.</p>
-                <p style="font-size: 1rem; color: #6a6a7e; margin-top: 10px;">Скоро здесь появится контент.</p>
+                <p>Советы и лайфхаки для капитанов гильдии ОПЛОТ</p>
+                
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h3>⚓ Навигация и ветер</h3>
+                        <p>Содержимое раздела появится позже</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3>💥 Артиллерия</h3>
+                        <p>Содержимое раздела появится позже</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3>⚔️ Абордаж</h3>
+                        <p>Содержимое раздела появится позже</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3>💰 Экономика</h3>
+                        <p>Содержимое раздела появится позже</p>
+                    </div>
+                </div>
+                
+                <button onclick="logout()" class="btn-logout">🚪 Выйти (забыть пароль)</button>
             </div>
         </div>
 
@@ -135,6 +192,13 @@
 
     <script>
         const CORRECT_PASSWORD = "oplot2026"; // СМЕНИТЕ ПАРОЛЬ!
+        const STORAGE_KEY = "oplot_tips_authorized";
+
+        window.onload = function() {
+            if (localStorage.getItem(STORAGE_KEY) === 'true') {
+                showContent();
+            }
+        };
 
         function checkPassword(event) {
             event.preventDefault();
@@ -142,13 +206,23 @@
             var messageDiv = document.getElementById('passwordMessage');
 
             if (input === CORRECT_PASSWORD) {
-                document.getElementById('password-form').style.display = 'none';
-                document.getElementById('content-protected').style.display = 'block';
+                localStorage.setItem(STORAGE_KEY, 'true');
+                showContent();
             } else {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
                 messageDiv.textContent = '❌ Неверный пароль. Попробуйте снова.';
             }
+        }
+
+        function showContent() {
+            document.getElementById('password-form').style.display = 'none';
+            document.getElementById('content-protected').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
         }
     </script>
 </body>
