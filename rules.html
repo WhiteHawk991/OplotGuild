@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
+        /* все стили остаются без изменений */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -159,11 +160,11 @@
                 <label>Ваш ник в WOSB:</label>
                 <input type="text" id="nickname" required />
 
-                <label>Ваш ник в lolk (Discord):</label>
+                <label>Ваш ник в Lolk (Discord):</label>
                 <input type="text" id="discordNick" required />
 
-                <label>Основной корабль:</label>
-                <input type="text" id="mainShip" />
+                <label>👉 Ваш ранг в WOSB (Капитан/Старпом/Мичман и т.д.):</label>
+                <input type="text" id="rank" />
 
                 <input type="checkbox" id="agreed" required />
                 <label class="checkbox-label">Я ознакомлен(а) и согласен(на) с правилами гильдии</label>
@@ -182,7 +183,7 @@
 
             var nickname = document.getElementById('nickname').value.trim();
             var discordNick = document.getElementById('discordNick').value.trim();
-            var mainShip = document.getElementById('mainShip').value.trim();
+            var rank = document.getElementById('rank').value.trim();
             var agreed = document.getElementById('agreed').checked;
             var messageDiv = document.getElementById('message');
 
@@ -200,16 +201,16 @@
                 return;
             }
 
-            // Здесь можно отправить данные на сервер (например, через fetch)
-            // Пока просто показываем успех
+            // Здесь будет отправка в Lolk (настраивается отдельно)
+            // Пока просто имитация успеха
             messageDiv.style.display = 'block';
             messageDiv.className = 'message success';
-            messageDiv.textContent = '✅ Заявка успешно отправлена! Мы свяжемся с вами в lolk в течение 24 часов.';
+            messageDiv.textContent = '✅ Заявка успешно отправлена! Мы свяжемся с вами в Lolk в течение 24 часов.';
 
             // Очищаем форму (кроме чекбокса)
             document.getElementById('nickname').value = '';
             document.getElementById('discordNick').value = '';
-            document.getElementById('mainShip').value = '';
+            document.getElementById('rank').value = '';
             document.getElementById('agreed').checked = false;
         }
     </script>
