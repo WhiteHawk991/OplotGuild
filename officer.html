@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* все стили как в предыдущей версии, оставляем без изменений */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -360,7 +359,6 @@
                             hour: '2-digit',
                             minute: '2-digit'
                         });
-                        var repeatInfo = event.repeatInterval ? ` 🔁 каждые ${event.repeatInterval} дн.` : '';
                         div.innerHTML = `
                             <div class="info">
                                 <div class="title">${event.title}</div>
@@ -384,7 +382,6 @@
                 return;
             }
 
-            // Загружаем актуальную версию файла
             fetch(FILE_PATH + '?t=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
@@ -436,6 +433,26 @@
                 })
                 .then(response => {
                     if (!response.ok) {
+                        // Если снова 409, пробуем ещё раз (один раз)
+                        if (response.status === 409) {
+                            // Получаем свежий SHA и повторяем запрос
+                            return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`)
+                                .then(r => r.json())
+                                .then(fileInfo => {
+                                    return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Authorization': `token ${token}`,
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            message: 'Обновление событий (повтор)',
+                                            content: utf8ToBase64(JSON.stringify(data, null, 2)),
+                                            sha: fileInfo.sha
+                                        })
+                                    });
+                                });
+                        }
                         throw new Error('Ошибка сохранения: ' + response.status);
                     }
                     return response.json();
