@@ -1,3 +1,11 @@
 {
-  "events": []
+  "events": [
+    {
+      "id": 1785741215996,
+      "title": "РЕЙД",
+      "datetime": "2026-08-03T11:11:00",
+      "description": "СБОР НА ПИРАТОВ",
+      "notified": false
+    }
+  ]
 }
