@@ -15,30 +15,46 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.EVENT_WEBHOOK_URL }}
         run: |
+          # Загружаем events.json
           EVENTS=$(cat events.json)
-          NOW=$(date -d "3 hours" +"%Y-%m-%dT%H:%M:00")
           
+          # Текущее время по МСК (UTC+3)
+          NOW=$(date -u -d "3 hours" +"%Y-%m-%dT%H:%M:00")
+          
+          echo "🕐 Текущее время (МСК): $NOW"
+          
+          # Проходим по каждому событию
           echo "$EVENTS" | jq -c '.events[]' | while read event; do
             ID=$(echo "$event" | jq -r '.id')
             DATETIME=$(echo "$event" | jq -r '.datetime')
             NOTIFIED=$(echo "$event" | jq -r '.notified')
             TITLE=$(echo "$event" | jq -r '.title')
             DESCRIPTION=$(echo "$event" | jq -r '.description')
-            REPEAT_INTERVAL=$(echo "$event" | jq -r '.repeatInterval')
             
+            echo "🔍 Проверяем событие: $TITLE (ID: $ID) в $DATETIME"
+            
+            # Если уведомление ещё не отправлено
             if [[ "$NOTIFIED" == "false" ]]; then
-              ONE_HOUR_BEFORE=$(date -d "$DATETIME - 1 hour" +"%Y-%m-%dT%H:%M:00")
+              # Вычисляем время за 1 час до события
+              ONE_HOUR_BEFORE=$(date -u -d "$DATETIME - 1 hour" +"%Y-%m-%dT%H:%M:00")
               
-              if [[ "$NOW" >= "$ONE_HOUR_BEFORE" ]]; then
-                MESSAGE="**⏰ Напоминание о событии!**\n\n**📌 $TITLE**\n**📅 Начало:** $(date -d "$DATETIME" +"%d.%m.%Y в %H:%M") МСК\n**📝 Описание:** ${DESCRIPTION:-Нет}"
+              echo "⏰ Уведомление должно быть отправлено в: $ONE_HOUR_BEFORE"
+              
+              # Если текущее время >= времени за 1 час до события
+              if [[ "$NOW" > "$ONE_HOUR_BEFORE" ]] || [[ "$NOW" == "$ONE_HOUR_BEFORE" ]]; then
+                echo "📤 Отправляем уведомление для: $TITLE"
+                
+                MESSAGE="**⏰ Напоминание о событии!**\n\n**📌 $TITLE**\n**📅 Начало:** $(date -u -d "$DATETIME" +"%d.%m.%Y в %H:%M") МСК\n**📝 Описание:** ${DESCRIPTION:-Нет}"
                 
                 curl -X POST "$WEBHOOK_URL" \
                   -H "Content-Type: application/json" \
                   -d "{\"content\":\"$MESSAGE\"}"
                 
-                # Помечаем как уведомлённое
-                # Здесь нужно обновить JSON через API, но это пока оставим
                 echo "✅ Уведомление отправлено для события: $TITLE"
+              else
+                echo "⏳ До события ещё больше часа, пропускаем."
               fi
+            else
+              echo "⏭️ Уведомление уже отправлено для: $TITLE"
             fi
           done
