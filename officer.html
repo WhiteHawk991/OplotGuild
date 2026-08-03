@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* Стили как в предыдущей версии */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -82,6 +81,20 @@
             background: #e0d6b0;
             transform: scale(1.02);
         }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
         .btn-logout {
             display: inline-block;
             margin-top: 20px;
@@ -139,6 +152,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+        .event-item .info {
+            flex: 1;
         }
         .event-item .title {
             font-weight: bold;
@@ -160,6 +177,10 @@
         .event-item .status.done {
             background: rgba(40, 167, 69, 0.2);
             color: #28a745;
+        }
+        .empty-message {
+            color: #6a6a7e;
+            padding: 20px;
         }
     </style>
 </head>
@@ -200,7 +221,7 @@
 
                 <!-- Список событий -->
                 <div id="eventsList" class="events-list">
-                    <p style="color: #6a6a7e;">⏳ Загрузка событий...</p>
+                    <div class="empty-message">⏳ Загрузка событий...</div>
                 </div>
 
                 <button onclick="logout()" class="btn-logout">🚪 Выйти (забыть пароль)</button>
@@ -229,8 +250,14 @@
         // ==================== НАСТРОЙКИ ====================
         const OFFICER_PASSWORD = "oplot_officer_2026"; // СМЕНИТЕ ПАРОЛЬ!
         const STORAGE_KEY = "oplot_officer_authorized";
-        // ВАШ НОВЫЙ ВЕБХУК ДЛЯ СОБЫТИЙ
         const EVENT_WEBHOOK_URL = "https://lolka.app/api/webhooks/819996142371840/ODE5OTk2MTQyMzcxODQw.Fe6hSaqFataH3HIQBq6-2Q7KNXPHp7Q-LL89aGsMY_E";
+
+        // ========== GitHub настройки ==========
+        const GITHUB_TOKEN = "ваш_персональный_токен"; // ЗАМЕНИТЕ НА ВАШ ТОКЕН
+        const REPO_OWNER = "WhiteHawk991";
+        const REPO_NAME = "OplotGuild";
+        const FILE_PATH = "events.json";
+        // ======================================
         // =================================================
 
         window.onload = function() {
@@ -266,12 +293,12 @@
             location.reload();
         }
 
-        // ==================== ЗАГРУЗКА СОБЫТИЙ ИЗ EVENTS.JSON ====================
+        // ==================== ЗАГРУЗКА СОБЫТИЙ ====================
         function loadEvents() {
             var container = document.getElementById('eventsList');
-            container.innerHTML = '<p style="color: #6a6a7e;">⏳ Загрузка событий...</p>';
+            container.innerHTML = '<div class="empty-message">⏳ Загрузка событий...</div>';
 
-            fetch('events.json')
+            fetch(FILE_PATH + '?t=' + new Date().getTime()) // добавляем ?t= чтобы избежать кеша
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Файл events.json не найден');
@@ -281,7 +308,7 @@
                 .then(data => {
                     container.innerHTML = '';
                     if (!data.events || data.events.length === 0) {
-                        container.innerHTML = '<p style="color: #6a6a7e;">📭 Нет запланированных событий.</p>';
+                        container.innerHTML = '<div class="empty-message">📭 Нет запланированных событий.</div>';
                         return;
                     }
                     // Сортируем по дате
@@ -300,23 +327,86 @@
                             minute: '2-digit'
                         });
                         div.innerHTML = `
-                            <div>
+                            <div class="info">
                                 <div class="title">${event.title}</div>
                                 <div class="time">📅 ${formattedDate} МСК</div>
                                 ${event.description ? `<div style="font-size:0.85rem; color:#8a8a9e;">${event.description}</div>` : ''}
+                                <div class="status ${statusClass}">${statusText}</div>
                             </div>
-                            <div class="status ${statusClass}">${statusText}</div>
+                            <button class="btn-danger" onclick="deleteEvent(${event.id})">🗑️ Удалить</button>
                         `;
                         container.appendChild(div);
                     });
                 })
                 .catch(error => {
                     console.error('Ошибка загрузки событий:', error);
-                    container.innerHTML = '<p style="color: #6a6a7e;">⚠️ Не удалось загрузить события. Проверьте наличие файла events.json.</p>';
+                    container.innerHTML = '<div class="empty-message">⚠️ Не удалось загрузить события. Проверьте наличие файла events.json.</div>';
                 });
         }
 
-        // ==================== ДОБАВЛЕНИЕ СОБЫТИЯ (ОТПРАВКА В LOLK) ====================
+        // ==================== УДАЛЕНИЕ СОБЫТИЯ ====================
+        function deleteEvent(eventId) {
+            if (!confirm('Вы уверены, что хотите удалить это событие?')) {
+                return;
+            }
+
+            // Загружаем текущий файл
+            fetch(FILE_PATH + '?t=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    // Фильтруем события
+                    data.events = data.events.filter(e => e.id !== eventId);
+                    // Сохраняем на GitHub
+                    return saveToGitHub(data);
+                })
+                .then(() => {
+                    // Обновляем список на странице
+                    loadEvents();
+                    // Показываем сообщение об успехе
+                    var msg = document.getElementById('eventMessage');
+                    msg.style.display = 'block';
+                    msg.className = 'message success';
+                    msg.textContent = '✅ Событие успешно удалено!';
+                    setTimeout(() => { msg.style.display = 'none'; }, 3000);
+                })
+                .catch(error => {
+                    console.error('Ошибка удаления:', error);
+                    var msg = document.getElementById('eventMessage');
+                    msg.style.display = 'block';
+                    msg.className = 'message error';
+                    msg.textContent = '❌ Не удалось удалить событие. Попробуйте позже.';
+                });
+        }
+
+        // ==================== СОХРАНЕНИЕ В GITHUB ====================
+        function saveToGitHub(data) {
+            // Получаем текущий SHA файла (нужен для обновления)
+            return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`)
+                .then(response => response.json())
+                .then(fileInfo => {
+                    // Отправляем PUT запрос на обновление
+                    return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: 'Обновление событий',
+                            content: btoa(JSON.stringify(data, null, 2)),
+                            sha: fileInfo.sha
+                        })
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка сохранения: ' + response.status);
+                    }
+                    return response.json();
+                });
+        }
+
+        // ==================== ДОБАВЛЕНИЕ СОБЫТИЯ ====================
         function addEvent(event) {
             event.preventDefault();
 
@@ -332,44 +422,61 @@
                 return;
             }
 
-            // Формируем сообщение для Lolk
+            // Проверка, что дата в будущем
             var eventDate = new Date(datetime);
-            var formattedDate = eventDate.toLocaleString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            var now = new Date();
+            if (eventDate < now) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Нельзя добавлять события в прошлом!';
+                return;
+            }
 
+            // Загружаем текущий список событий
+            fetch(FILE_PATH + '?t=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        // Если файла нет, создаём новый
+                        return { events: [] };
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var newEvent = {
+                        id: Date.now(),
+                        title: title,
+                        datetime: datetime + ':00',
+                        description: description || '',
+                        notified: false
+                    };
+                    data.events.push(newEvent);
+                    return saveToGitHub(data);
+                })
+                .then(() => {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✅ Событие добавлено! Уведомление будет отправлено за 1 час.';
+                    document.getElementById('eventForm').reset();
+                    loadEvents(); // Обновляем список
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '❌ Не удалось сохранить событие. Попробуйте позже.';
+                });
+
+            // Также отправляем уведомление в Lolk
             var payload = {
-                content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время:** ${formattedDate} МСК\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
+                content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время:** ${eventDate.toLocaleString('ru-RU')} МСК\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
             };
 
-            // Отправка в Lolk
             fetch(EVENT_WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
-            .then(response => {
-                if (response.ok) {
-                    messageDiv.style.display = 'block';
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = '✅ Событие отправлено в Lolk! Уведомление будет отправлено за 1 час.';
-                    document.getElementById('eventForm').reset();
-                } else {
-                    return response.text().then(text => {
-                        throw new Error(`Ошибка ${response.status}: ${text}`);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ Не удалось отправить событие. Попробуйте позже.';
-            });
+            .catch(error => console.error('Ошибка отправки в Lolk:', error));
         }
     </script>
 </body>
