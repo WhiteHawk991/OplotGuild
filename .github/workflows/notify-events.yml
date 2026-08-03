@@ -15,10 +15,7 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.EVENT_WEBHOOK_URL }}
         run: |
-          # Загружаем файл
           EVENTS=$(cat events.json)
-          
-          # Текущее время по МСК
           NOW=$(date -d "3 hours" +"%Y-%m-%dT%H:%M:00")
           
           echo "$EVENTS" | jq -c '.events[]' | while read event; do
@@ -27,6 +24,7 @@ jobs:
             NOTIFIED=$(echo "$event" | jq -r '.notified')
             TITLE=$(echo "$event" | jq -r '.title')
             DESCRIPTION=$(echo "$event" | jq -r '.description')
+            REPEAT_INTERVAL=$(echo "$event" | jq -r '.repeatInterval')
             
             if [[ "$NOTIFIED" == "false" ]]; then
               ONE_HOUR_BEFORE=$(date -d "$DATETIME - 1 hour" +"%Y-%m-%dT%H:%M:00")
@@ -38,6 +36,8 @@ jobs:
                   -H "Content-Type: application/json" \
                   -d "{\"content\":\"$MESSAGE\"}"
                 
+                # Помечаем как уведомлённое
+                # Здесь нужно обновить JSON через API, но это пока оставим
                 echo "✅ Уведомление отправлено для события: $TITLE"
               fi
             fi
