@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-        /* ... стили как в предыдущей версии (я их сокращу для экономии места) ... */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -194,6 +193,7 @@
         <a href="/OplotGuild/links.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🔗 Ссылки</a>
         <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">⚓ Билды 🔒</a>
         <a href="/OplotGuild/tips.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📖 Советы 🔒</a>
+        <a href="/OplotGuild/officer.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">👑 Офицерская</a>
     </nav>
 
     <div class="container">
@@ -203,7 +203,6 @@
                 <h2>Офицерская панель</h2>
                 <p>Управление событиями и расписанием гильдии</p>
 
-                <!-- Форма добавления события -->
                 <div class="form-box">
                     <h3 style="color: #c9a84c; text-align: center; margin-top: 0;">➕ Добавить событие</h3>
                     <form id="eventForm" onsubmit="addEvent(event)">
@@ -221,7 +220,6 @@
                     <div id="eventMessage" class="message" style="display: none;"></div>
                 </div>
 
-                <!-- Список событий -->
                 <div id="eventsList" class="events-list">
                     <div class="empty-message">⏳ Загрузка событий...</div>
                 </div>
@@ -263,6 +261,11 @@
         const FILE_PATH = "events.json";
         // =================================================
 
+        // Функция для корректного Base64 (поддерживает UTF-8)
+        function utf8ToBase64(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
         window.onload = function() {
             var authData = sessionStorage.getItem(AUTH_STORAGE_KEY);
             if (authData) {
@@ -275,7 +278,6 @@
                     }
                 } catch (e) {}
             }
-            // Если нет данных - показываем форму входа
             document.getElementById('content-protected').style.display = 'none';
             document.getElementById('password-form').style.display = 'block';
         };
@@ -307,7 +309,6 @@
             location.reload();
         }
 
-        // ==================== ЗАГРУЗКА СОБЫТИЙ ====================
         function loadEvents(token) {
             var container = document.getElementById('eventsList');
             container.innerHTML = '<div class="empty-message">⏳ Загрузка событий...</div>';
@@ -357,7 +358,6 @@
                 });
         }
 
-        // ==================== УДАЛЕНИЕ СОБЫТИЯ ====================
         function deleteEvent(eventId, token) {
             if (!confirm('Вы уверены, что хотите удалить это событие?')) {
                 return;
@@ -386,7 +386,6 @@
                 });
         }
 
-        // ==================== СОХРАНЕНИЕ В GITHUB ====================
         function saveToGitHub(data, token) {
             return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`)
                 .then(response => response.json())
@@ -399,7 +398,7 @@
                         },
                         body: JSON.stringify({
                             message: 'Обновление событий',
-                            content: btoa(JSON.stringify(data, null, 2)),
+                            content: utf8ToBase64(JSON.stringify(data, null, 2)),
                             sha: fileInfo.sha
                         })
                     });
@@ -412,7 +411,6 @@
                 });
         }
 
-        // ==================== ДОБАВЛЕНИЕ СОБЫТИЯ ====================
         function addEvent(event) {
             event.preventDefault();
 
@@ -421,7 +419,6 @@
             var description = document.getElementById('eventDescription').value.trim();
             var messageDiv = document.getElementById('eventMessage');
 
-            // Получаем токен из sessionStorage
             var authData = sessionStorage.getItem(AUTH_STORAGE_KEY);
             if (!authData) {
                 messageDiv.style.display = 'block';
@@ -479,7 +476,6 @@
                     messageDiv.textContent = '❌ Не удалось сохранить событие. Попробуйте позже.';
                 });
 
-            // Отправка в Lolk (без токена)
             var payload = {
                 content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время:** ${eventDate.toLocaleString('ru-RU')} МСК\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
             };
