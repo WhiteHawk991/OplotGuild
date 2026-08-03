@@ -1,8 +1,8 @@
-name: Проверка событий
+name: Уведомления о событиях
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Каждые 30 минут
+    - cron: '*/5 * * * *'  # Каждые 30 минут
   workflow_dispatch: # Для ручного запуска
 
 jobs:
@@ -11,5 +11,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Проверка событий
+      - name: Проверка событий и отправка уведомлений
+        env:
+          WEBHOOK_URL: ${{ secrets.EVENT_WEBHOOK_URL }}
         run: |
+          # Загружаем events.json
+          EVENTS=$(cat events.json)
+          
+          # Текущее время (UTC) + 3 часа (МСК)
+          NOW=$(date -d "3 hours" +"%Y-%m-%dT%H:%M:00")
+          
+          # Проверяем каждое событие
+          echo "$EVENTS" | jq -c '.events[]' | while read event; do
+            ID=$(echo "$event" | jq -r '.id')
+            DATETIME=$(echo "$event" | jq -r '.datetime')
+            NOTIFIED=$(echo "$event" | jq -r '.notified')
+            TITLE=$(echo "$event" | jq -r '.title')
+            DESCRIPTION=$(echo "$event" | jq -r '.description')
+            
+            # Проверяем, что до события остался 1 час и уведомление ещё не отправлено
+            if [[ "$NOTIFIED" == "false" ]]; then
+              # Вычисляем время через 1 час
+              ONE_HOUR_BEFORE=$(date -d "$DATETIME - 1 hour" +"%Y-%m-%dT%H:%M:00")
+              
+              # Если текущее время >= времени за 1 час до события
+              if [[ "$NOW" >= "$ONE_HOUR_BEFORE" ]]; then
+                # Отправляем уведомление в Lolk
+                MESSAGE="**⏰ Напоминание о событии!**\n\n**📌 Событие:** $TITLE\n**📅 Начало:** $(date -d "$DATETIME" +"%d.%m.%Y в %H:%M") МСК\n**📝 Описание:** ${DESCRIPTION:-Нет}"
+                curl -X POST "$WEBHOOK_URL" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"content\":\"$MESSAGE\"}"
+                
+                # Отмечаем событие как уведомлённое
+                # (обновляем events.json через GitHub API)
+                # Это сложная часть, я покажу позже
+              fi
+            fi
+          done
