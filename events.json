@@ -6,6 +6,14 @@
       "datetime": "2026-08-03T11:11:00",
       "description": "СБОР НА ПИРАТОВ",
       "notified": false
+    },
+    {
+      "id": 1785772401237,
+      "title": "ДЕНЬ ТЕНДЕРА!",
+      "datetime": "2026-08-06T00:00:00",
+      "description": "ТЕНДЕР!",
+      "notified": false,
+      "repeatInterval": 10
     }
   ]
 }
