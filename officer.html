@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Офицерская панель — ОПЛОТ</title>
+    <base href="/OplotGuild/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+        body {
+            background: #0a0a15;
+            color: #e0d6b0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .lock-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .message-box {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            margin-bottom: 20px;
+        }
+        .message-box h2 {
+            color: #c9a84c;
+        }
+        .form-box {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            margin: 20px auto;
+            text-align: left;
+            max-width: 500px;
+        }
+        .form-box label {
+            display: block;
+            margin-bottom: 5px;
+            color: #c9a84c;
+        }
+        .form-box input[type="text"],
+        .form-box input[type="datetime-local"],
+        .form-box textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0a0a15;
+            color: #e0d6b0;
+            border: 1px solid #c9a84c;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+        .form-box textarea {
+            min-height: 60px;
+        }
+        .btn-submit {
+            background: #c9a84c;
+            color: #1a1a2e;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background: #e0d6b0;
+            transform: scale(1.02);
+        }
+        .btn-logout {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            background: transparent;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .btn-logout:hover {
+            background: #ff6b6b;
+            color: #0a0a15;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message.success {
+            background: #2d6a4f;
+            color: #d8f3dc;
+        }
+        .message.error {
+            background: #6a1e1e;
+            color: #ffcccc;
+        }
+        .hidden {
+            display: none;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #c9a84c;
+            text-decoration: none;
+            border: 1px solid #c9a84c;
+            padding: 10px 25px;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+        .back-link:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+        .events-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .event-item {
+            background: rgba(26, 26, 46, 0.6);
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 3px solid #c9a84c;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .event-item .title {
+            font-weight: bold;
+            color: #c9a84c;
+        }
+        .event-item .time {
+            color: #b8a88a;
+            font-size: 0.9rem;
+        }
+        .event-item .status {
+            font-size: 0.8rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .event-item .status.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .event-item .status.done {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <!-- МЕНЮ -->
+    <nav style="display: flex; justify-content: center; gap: 30px; padding: 15px 20px; background: rgba(10, 10, 21, 0.9); border-bottom: 2px solid #c9a84c; margin-bottom: 20px; flex-wrap: wrap;">
+        <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🏠 Главная</a>
+        <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📜 Правила</a>
+        <a href="/OplotGuild/links.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🔗 Ссылки</a>
+        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">⚓ Билды 🔒</a>
+        <a href="/OplotGuild/tips.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📖 Советы 🔒</a>
+    </nav>
+
+    <div class="container">
+        <div id="content-protected" style="display: none;">
+            <div class="message-box">
+                <div class="lock-icon">👑</div>
+                <h2>Офицерская панель</h2>
+                <p>Управление событиями и расписанием гильдии</p>
+
+                <!-- Форма добавления события -->
+                <div class="form-box">
+                    <h3 style="color: #c9a84c; text-align: center; margin-top: 0;">➕ Добавить событие</h3>
+                    <form id="eventForm" onsubmit="addEvent(event)">
+                        <label for="eventTitle">Название события</label>
+                        <input type="text" id="eventTitle" required placeholder="Например: Рейд на марочную" />
+
+                        <label for="eventDatetime">Дата и время (МСК)</label>
+                        <input type="datetime-local" id="eventDatetime" required />
+
+                        <label for="eventDescription">Описание (необязательно)</label>
+                        <textarea id="eventDescription" placeholder="Дополнительная информация"></textarea>
+
+                        <button type="submit" class="btn-submit">✅ Добавить событие</button>
+                    </form>
+                    <div id="eventMessage" class="message" style="display: none;"></div>
+                </div>
+
+                <!-- Список событий -->
+                <div id="eventsList" class="events-list">
+                    <p style="color: #6a6a7e;">⏳ Загрузка событий...</p>
+                </div>
+
+                <button onclick="logout()" class="btn-logout">🚪 Выйти (забыть пароль)</button>
+            </div>
+        </div>
+
+        <div id="password-form">
+            <div class="message-box">
+                <div class="lock-icon">🔒</div>
+                <h2>Офицерский доступ</h2>
+                <p>Только для офицеров гильдии ОПЛОТ</p>
+                <div class="form-box">
+                    <form id="passwordForm" onsubmit="checkPassword(event)">
+                        <input type="password" id="passwordInput" placeholder="Введите пароль" required />
+                        <button type="submit" class="btn-submit">Войти</button>
+                    </form>
+                    <div id="passwordMessage" class="message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <a href="/OplotGuild/" class="back-link">← На главную</a>
+    </div>
+
+    <script>
+        // ==================== НАСТРОЙКИ ====================
+        const OFFICER_PASSWORD = "oplot_officer_2026"; // СМЕНИТЕ ПАРОЛЬ!
+        const STORAGE_KEY = "oplot_officer_authorized";
+        // =================================================
+
+        window.onload = function() {
+            if (localStorage.getItem(STORAGE_KEY) === 'true') {
+                showContent();
+                loadEvents();
+            }
+        };
+
+        function checkPassword(event) {
+            event.preventDefault();
+            var input = document.getElementById('passwordInput').value;
+            var messageDiv = document.getElementById('passwordMessage');
+
+            if (input === OFFICER_PASSWORD) {
+                localStorage.setItem(STORAGE_KEY, 'true');
+                showContent();
+                loadEvents();
+            } else {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Неверный пароль. Попробуйте снова.';
+            }
+        }
+
+        function showContent() {
+            document.getElementById('password-form').style.display = 'none';
+            document.getElementById('content-protected').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+
+        // ==================== ЗАГРУЗКА СОБЫТИЙ ====================
+        function loadEvents() {
+            var container = document.getElementById('eventsList');
+            container.innerHTML = '<p style="color: #6a6a7e;">⏳ Загрузка событий...</p>';
+
+            fetch('events.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Файл events.json не найден');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    container.innerHTML = '';
+                    if (!data.events || data.events.length === 0) {
+                        container.innerHTML = '<p style="color: #6a6a7e;">📭 Нет запланированных событий.</p>';
+                        return;
+                    }
+                    // Сортируем по дате (сначала ближайшие)
+                    data.events.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+                    data.events.forEach(function(event) {
+                        var div = document.createElement('div');
+                        div.className = 'event-item';
+                        var statusClass = event.notified ? 'done' : 'pending';
+                        var statusText = event.notified ? '✅ Уведомление отправлено' : '⏳ Ожидает уведомления';
+                        var dateObj = new Date(event.datetime);
+                        var formattedDate = dateObj.toLocaleString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        div.innerHTML = `
+                            <div>
+                                <div class="title">${event.title}</div>
+                                <div class="time">📅 ${formattedDate} МСК</div>
+                                ${event.description ? `<div style="font-size:0.85rem; color:#8a8a9e;">${event.description}</div>` : ''}
+                            </div>
+                            <div class="status ${statusClass}">${statusText}</div>
+                        `;
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки событий:', error);
+                    container.innerHTML = '<p style="color: #6a6a7e;">⚠️ Не удалось загрузить события. Проверьте наличие файла events.json.</p>';
+                });
+        }
+
+        // ==================== ДОБАВЛЕНИЕ СОБЫТИЯ ====================
+        function addEvent(event) {
+            event.preventDefault();
+
+            var title = document.getElementById('eventTitle').value.trim();
+            var datetime = document.getElementById('eventDatetime').value;
+            var description = document.getElementById('eventDescription').value.trim();
+            var messageDiv = document.getElementById('eventMessage');
+
+            if (!title || !datetime) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Заполните все обязательные поля!';
+                return;
+            }
+
+            // Проверяем, что дата в будущем
+            var eventDate = new Date(datetime);
+            var now = new Date();
+            if (eventDate < now) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Нельзя добавлять события в прошлом!';
+                return;
+            }
+
+            // Загружаем текущий список событий
+            fetch('events.json')
+                .then(response => {
+                    if (!response.ok) {
+                        // Если файла нет, создаём новый
+                        return { events: [] };
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var newEvent = {
+                        id: Date.now(),
+                        title: title,
+                        datetime: datetime + ':00',
+                        description: description || '',
+                        notified: false
+                    };
+                    data.events.push(newEvent);
+                    // Сохраняем обратно в файл (через GitHub API)
+                    return saveEventsToGitHub(data);
+                })
+                .then(() => {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✅ Событие добавлено! Уведомление будет отправлено за 1 час.';
+                    document.getElementById('eventForm').reset();
+                    loadEvents(); // Обновляем список
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = '❌ Не удалось сохранить событие. Попробуйте позже.';
+                });
+        }
+
+        // ==================== СОХРАНЕНИЕ В GITHUB (через API) ====================
+        function saveEventsToGitHub(data) {
+            // ВАЖНО: Этот метод требует Personal Access Token с правами на запись в репозиторий.
+            // Подробности я напишу в тексте сообщения.
+            return fetch('https://api.github.com/repos/WhiteHawk991/OplotGuild/contents/events.json', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'token YOUR_GITHUB_TOKEN', // Замените на ваш токен
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Обновление событий',
+                    content: btoa(JSON.stringify(data, null, 2)),
+                    sha: null // Для первого коммита, потом нужно будет получать SHA
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка сохранения: ' + response.status);
+                }
+                return response.json();
+            });
+        }
+    </script>
+</body>
+</html>
