@@ -1,0 +1,15 @@
+name: Проверка событий
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Каждые 30 минут
+  workflow_dispatch: # Для ручного запуска
+
+jobs:
+  check-events:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Проверка событий
+        run: |
