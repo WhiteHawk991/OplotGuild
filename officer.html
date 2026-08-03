@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
+        /* все стили как в предыдущей версии, оставляем без изменений */
         body {
             background: #0a0a15;
             color: #e0d6b0;
@@ -383,6 +384,7 @@
                 return;
             }
 
+            // Загружаем актуальную версию файла
             fetch(FILE_PATH + '?t=' + new Date().getTime())
                 .then(response => response.json())
                 .then(data => {
@@ -406,10 +408,19 @@
                 });
         }
 
+        // ==================== ИСПРАВЛЕННАЯ ФУНКЦИЯ СОХРАНЕНИЯ ====================
         function saveToGitHub(data, token) {
+            // 1. Сначала получаем актуальный SHA файла
             return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // Если файла нет — создаём новый
+                        return { sha: null };
+                    }
+                    return response.json();
+                })
                 .then(fileInfo => {
+                    // 2. Отправляем PUT с правильным SHA
                     return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
                         method: 'PUT',
                         headers: {
@@ -419,7 +430,7 @@
                         body: JSON.stringify({
                             message: 'Обновление событий',
                             content: utf8ToBase64(JSON.stringify(data, null, 2)),
-                            sha: fileInfo.sha
+                            sha: fileInfo.sha || undefined
                         })
                     });
                 })
@@ -430,6 +441,7 @@
                     return response.json();
                 });
         }
+        // ===============================================================
 
         function addEvent(event) {
             event.preventDefault();
@@ -465,7 +477,6 @@
                 return;
             }
 
-            // Проверка на бесконечный цикл (максимум 365 дней)
             if (repeatInterval > 0 && repeatInterval < 1) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
@@ -508,7 +519,6 @@
                     messageDiv.textContent = '❌ Не удалось сохранить событие. Попробуйте позже.';
                 });
 
-            // Отправка в Lolk
             var payload = {
                 content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время первого события:** ${eventDate.toLocaleString('ru-RU')} МСК\n**🔄 Повторение:** ${repeatInterval > 0 ? `каждые ${repeatInterval} дней` : 'без повтора'}\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
             };
