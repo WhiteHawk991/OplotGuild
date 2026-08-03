@@ -52,6 +52,7 @@
         }
         .form-box input[type="text"],
         .form-box input[type="datetime-local"],
+        .form-box input[type="number"],
         .form-box input[type="password"],
         .form-box textarea {
             width: 100%;
@@ -65,6 +66,12 @@
         }
         .form-box textarea {
             min-height: 60px;
+        }
+        .form-box .hint {
+            font-size: 0.85rem;
+            color: #6a6a7e;
+            margin-top: -10px;
+            margin-bottom: 15px;
         }
         .btn-submit {
             background: #c9a84c;
@@ -179,6 +186,15 @@
             background: rgba(40, 167, 69, 0.2);
             color: #28a745;
         }
+        .event-item .repeat-badge {
+            font-size: 0.7rem;
+            background: rgba(201, 168, 76, 0.2);
+            color: #c9a84c;
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
         .empty-message {
             color: #6a6a7e;
             padding: 20px;
@@ -209,8 +225,12 @@
                         <label for="eventTitle">Название события</label>
                         <input type="text" id="eventTitle" required placeholder="Например: Рейд на марочную" />
 
-                        <label for="eventDatetime">Дата и время (МСК)</label>
+                        <label for="eventDatetime">Дата и время первого события (МСК)</label>
                         <input type="datetime-local" id="eventDatetime" required />
+
+                        <label for="repeatInterval">Повторять каждые N дней (0 = без повтора)</label>
+                        <input type="number" id="repeatInterval" min="0" max="365" value="0" />
+                        <div class="hint">🔁 Если указать > 0, событие будет повторяться бесконечно с этим интервалом.</div>
 
                         <label for="eventDescription">Описание (необязательно)</label>
                         <textarea id="eventDescription" placeholder="Дополнительная информация"></textarea>
@@ -261,7 +281,6 @@
         const FILE_PATH = "events.json";
         // =================================================
 
-        // Функция для корректного Base64 (поддерживает UTF-8)
         function utf8ToBase64(str) {
             return btoa(unescape(encodeURIComponent(str)));
         }
@@ -340,10 +359,11 @@
                             hour: '2-digit',
                             minute: '2-digit'
                         });
+                        var repeatInfo = event.repeatInterval ? ` 🔁 каждые ${event.repeatInterval} дн.` : '';
                         div.innerHTML = `
                             <div class="info">
                                 <div class="title">${event.title}</div>
-                                <div class="time">📅 ${formattedDate} МСК</div>
+                                <div class="time">📅 ${formattedDate} МСК ${event.repeatInterval ? `<span class="repeat-badge">🔁 ${event.repeatInterval} дн.</span>` : ''}</div>
                                 ${event.description ? `<div style="font-size:0.85rem; color:#8a8a9e;">${event.description}</div>` : ''}
                                 <div class="status ${statusClass}">${statusText}</div>
                             </div>
@@ -416,6 +436,7 @@
 
             var title = document.getElementById('eventTitle').value.trim();
             var datetime = document.getElementById('eventDatetime').value;
+            var repeatInterval = parseInt(document.getElementById('repeatInterval').value) || 0;
             var description = document.getElementById('eventDescription').value.trim();
             var messageDiv = document.getElementById('eventMessage');
 
@@ -444,6 +465,14 @@
                 return;
             }
 
+            // Проверка на бесконечный цикл (максимум 365 дней)
+            if (repeatInterval > 0 && repeatInterval < 1) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Интервал повторения должен быть не менее 1 дня.';
+                return;
+            }
+
             fetch(FILE_PATH + '?t=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) {
@@ -457,7 +486,8 @@
                         title: title,
                         datetime: datetime + ':00',
                         description: description || '',
-                        notified: false
+                        notified: false,
+                        repeatInterval: repeatInterval > 0 ? repeatInterval : null
                     };
                     data.events.push(newEvent);
                     return saveToGitHub(data, token);
@@ -465,8 +495,10 @@
                 .then(() => {
                     messageDiv.style.display = 'block';
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = '✅ Событие добавлено! Уведомление будет отправлено за 1 час.';
+                    var repeatText = repeatInterval > 0 ? ` (будет повторяться каждые ${repeatInterval} дней)` : '';
+                    messageDiv.textContent = `✅ Событие добавлено!${repeatText} Уведомление будет отправлено за 1 час до начала.`;
                     document.getElementById('eventForm').reset();
+                    document.getElementById('repeatInterval').value = '0';
                     loadEvents(token);
                 })
                 .catch(error => {
@@ -476,8 +508,9 @@
                     messageDiv.textContent = '❌ Не удалось сохранить событие. Попробуйте позже.';
                 });
 
+            // Отправка в Lolk
             var payload = {
-                content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время:** ${eventDate.toLocaleString('ru-RU')} МСК\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
+                content: `**👑 Новое событие от офицера!**\n\n**📌 Событие:** ${title}\n**📅 Дата и время первого события:** ${eventDate.toLocaleString('ru-RU')} МСК\n**🔄 Повторение:** ${repeatInterval > 0 ? `каждые ${repeatInterval} дней` : 'без повтора'}\n**📝 Описание:** ${description || 'Нет'}\n\n⏳ Уведомление будет отправлено за 1 час до начала.`
             };
             fetch(EVENT_WEBHOOK_URL, {
                 method: 'POST',
