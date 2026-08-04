@@ -18,7 +18,7 @@
             margin: 0;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 40px 20px;
             text-align: center;
@@ -29,17 +29,16 @@
             padding-bottom: 10px;
             display: inline-block;
         }
-        /* Группы кораблей */
         .ship-group {
             margin-bottom: 40px;
             text-align: left;
         }
         .ship-group h2 {
             color: #c9a84c;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             border-bottom: 2px solid rgba(201, 168, 76, 0.3);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -47,64 +46,60 @@
         .ship-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 12px;
         }
         .ship-card {
             background: var(--card-bg);
             border-radius: 10px;
             border: 1px solid rgba(201, 168, 76, 0.2);
-            padding: 15px 12px;
+            padding: 12px 10px;
             text-align: center;
             transition: 0.3s;
             cursor: default;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
         .ship-card:hover {
             border-color: #c9a84c;
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             box-shadow: 0 6px 20px var(--shadow-color);
         }
         .ship-card img {
-            width: 80px;
+            width: 70px;
             height: auto;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
         }
         .ship-card .name {
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
         }
         .ship-card .level {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             background: rgba(201, 168, 76, 0.15);
             padding: 2px 10px;
             border-radius: 20px;
             display: inline-block;
-            margin: 4px 0;
-        }
-        .ship-card .type {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin: 3px 0;
         }
         .ship-card .stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2px 10px;
-            font-size: 0.7rem;
+            gap: 2px 8px;
+            font-size: 0.65rem;
             width: 100%;
-            margin-top: 6px;
+            margin-top: 5px;
             color: var(--text-secondary);
         }
         .ship-card .stats span {
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid rgba(201, 168, 76, 0.05);
-            padding: 2px 0;
+            padding: 1px 0;
         }
         .ship-card .stats .val {
             color: var(--text-primary);
@@ -113,9 +108,103 @@
         .ship-card .stats .label {
             color: var(--text-muted);
         }
-        .empty-message {
+        .ship-card .compare-btn {
+            margin-top: 8px;
+            padding: 4px 12px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .ship-card .compare-btn:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+        .ship-card .compare-btn.active {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+
+        /* Таблица сравнения */
+        .compare-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+            text-align: left;
+            display: none;
+        }
+        .compare-section.visible {
+            display: block;
+        }
+        .compare-section h2 {
+            color: #c9a84c;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .compare-table-wrap {
+            overflow-x: auto;
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .compare-table th,
+        .compare-table td {
+            padding: 8px 12px;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .compare-table th {
+            background: rgba(201, 168, 76, 0.15);
+            color: #c9a84c;
+            font-weight: bold;
+        }
+        .compare-table .ship-name-cell {
+            font-weight: bold;
+            color: #c9a84c;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .compare-table .ship-name-cell img {
+            width: 30px;
+            height: auto;
+        }
+        .compare-table .remove-ship {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .compare-table .remove-ship:hover {
+            background: rgba(255, 107, 107, 0.2);
+        }
+        .compare-table .best-value {
+            background: rgba(46, 204, 113, 0.25);
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .compare-hint {
             color: var(--text-muted);
-            padding: 30px;
+            text-align: center;
+            padding: 20px;
+            font-size: 1rem;
         }
         .btn-back {
             display: inline-block;
@@ -137,7 +226,14 @@
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
             .ship-card img {
-                width: 60px;
+                width: 50px;
+            }
+            .compare-table {
+                font-size: 0.7rem;
+            }
+            .compare-table th,
+            .compare-table td {
+                padding: 4px 6px;
             }
         }
     </style>
@@ -147,10 +243,36 @@
 
     <div class="container">
         <h1>⚓ Верфь</h1>
-        <p style="color: var(--text-secondary); margin-top: 10px;">Все корабли World of Sea Battle с характеристиками</p>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Справочник кораблей World of Sea Battle. Нажмите <strong>«+ Сравнить»</strong> на карточке, чтобы добавить корабль в таблицу сравнения.</p>
 
         <div id="shipsContainer">
             <div class="empty-message">⏳ Загрузка кораблей...</div>
+        </div>
+
+        <!-- Секция сравнения -->
+        <div id="compareSection" class="compare-section">
+            <h2>📊 Сравнение кораблей</h2>
+            <div class="compare-hint" id="compareHint">Добавьте корабли, нажав «+ Сравнить» на карточке.</div>
+            <div class="compare-table-wrap" id="compareWrap" style="display: none;">
+                <table class="compare-table" id="compareTable">
+                    <thead>
+                        <tr>
+                            <th>Корабль</th>
+                            <th>Тип</th>
+                            <th>Уровень</th>
+                            <th>Прочность</th>
+                            <th>Скорость</th>
+                            <th>Маневр.</th>
+                            <th>Броня</th>
+                            <th>Трюм</th>
+                            <th>Экипаж</th>
+                            <th>Орудия</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compareBody"></tbody>
+                </table>
+            </div>
         </div>
 
         <a href="/OplotGuild/" class="btn-back">← На главную</a>
@@ -158,34 +280,41 @@
 
     <script src="menu.js"></script>
     <script>
+        // ============================================================
+        // 1. ДАННЫЕ
+        // ============================================================
+        var allShips = [];
+        var comparedShips = [];
+        var typeOrder = ['Быстроходные', 'Боевые', 'Транспортные', 'Осадные', 'Тяжелые', 'Имперские', 'Премиум'];
+
+        // ============================================================
+        // 2. ЗАГРУЗКА И ОТОБРАЖЕНИЕ
+        // ============================================================
         function loadShips() {
             var container = document.getElementById('shipsContainer');
             container.innerHTML = '<div class="empty-message">⏳ Загрузка кораблей...</div>';
 
             fetch('ships.json?t=' + new Date().getTime())
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Файл ships.json не найден');
-                    }
+                    if (!response.ok) throw new Error('Файл ships.json не найден');
                     return response.json();
                 })
                 .then(data => {
+                    allShips = data.ships || [];
                     container.innerHTML = '';
-                    if (!data.ships || data.ships.length === 0) {
+                    if (allShips.length === 0) {
                         container.innerHTML = '<div class="empty-message">📭 Нет данных о кораблях.</div>';
                         return;
                     }
 
-                    // Группируем по типам
+                    // Группировка
                     var groups = {};
-                    data.ships.forEach(function(ship) {
+                    allShips.forEach(function(ship) {
                         var type = ship.type || 'Другие';
                         if (!groups[type]) groups[type] = [];
                         groups[type].push(ship);
                     });
 
-                    // Сортируем типы в нужном порядке
-                    var typeOrder = ['Быстроходные', 'Боевые', 'Транспортные', 'Тяжёлые', 'Осадные', 'Имперские', 'Другие'];
                     var sortedTypes = Object.keys(groups).sort(function(a, b) {
                         return typeOrder.indexOf(a) - typeOrder.indexOf(b);
                     });
@@ -202,20 +331,18 @@
                         var grid = document.createElement('div');
                         grid.className = 'ship-grid';
 
-                        // Сортируем корабли по уровню (от высшего к низшему)
-                        ships.sort(function(a, b) {
-                            return (b.level || 0) - (a.level || 0);
-                        });
+                        ships.sort(function(a, b) { return (b.level || 0) - (a.level || 0); });
 
                         ships.forEach(function(ship) {
                             var card = document.createElement('div');
                             card.className = 'ship-card';
+                            card.dataset.shipKey = ship.name;
                             var imgSrc = ship.image || 'images/ships/default.png';
+                            var isCompared = comparedShips.some(s => s.name === ship.name);
                             card.innerHTML = `
                                 <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
                                 <div class="name">${ship.name}</div>
                                 <div class="level">Уровень ${ship.level || '?'}</div>
-                                <div class="type">${ship.type || ''}</div>
                                 <div class="stats">
                                     <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
                                     <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
@@ -224,8 +351,8 @@
                                     <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
                                     <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
                                     <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
-                                    <span><span class="label">🏴 Тип</span><span class="val">${ship.type || '?'}</span></span>
                                 </div>
+                                <button class="compare-btn ${isCompared ? 'active' : ''}" onclick="toggleCompare('${ship.name}')">${isCompared ? '✓ В сравнении' : '+ Сравнить'}</button>
                             `;
                             grid.appendChild(card);
                         });
@@ -240,6 +367,96 @@
                 });
         }
 
+        // ============================================================
+        // 3. СРАВНЕНИЕ
+        // ============================================================
+        function toggleCompare(shipName) {
+            var ship = allShips.find(s => s.name === shipName);
+            if (!ship) return;
+
+            var index = comparedShips.findIndex(s => s.name === shipName);
+            if (index !== -1) {
+                comparedShips.splice(index, 1);
+            } else {
+                if (comparedShips.length >= 6) {
+                    alert('Максимум 6 кораблей для сравнения.');
+                    return;
+                }
+                comparedShips.push(ship);
+            }
+            updateCompareUI();
+            // Обновляем кнопки на карточках
+            document.querySelectorAll('.ship-card').forEach(function(card) {
+                var btn = card.querySelector('.compare-btn');
+                if (!btn) return;
+                var name = card.dataset.shipKey;
+                var isCompared = comparedShips.some(s => s.name === name);
+                btn.textContent = isCompared ? '✓ В сравнении' : '+ Сравнить';
+                btn.classList.toggle('active', isCompared);
+            });
+        }
+
+        function updateCompareUI() {
+            var section = document.getElementById('compareSection');
+            var hint = document.getElementById('compareHint');
+            var wrap = document.getElementById('compareWrap');
+            var body = document.getElementById('compareBody');
+
+            if (comparedShips.length === 0) {
+                section.classList.remove('visible');
+                return;
+            }
+            section.classList.add('visible');
+            hint.style.display = 'none';
+            wrap.style.display = 'block';
+            body.innerHTML = '';
+
+            // Определяем максимальные значения
+            var maxValues = {
+                durability: -Infinity,
+                speed: -Infinity,
+                maneuverability: -Infinity,
+                armor: -Infinity,
+                cargo: -Infinity,
+                crew: -Infinity,
+                guns: -Infinity
+            };
+            comparedShips.forEach(function(s) {
+                ['durability', 'speed', 'maneuverability', 'armor', 'cargo', 'crew', 'guns'].forEach(function(key) {
+                    var val = parseFloat(s[key]) || 0;
+                    if (val > maxValues[key]) maxValues[key] = val;
+                });
+            });
+
+            comparedShips.forEach(function(ship) {
+                var tr = document.createElement('tr');
+                var isBest = function(key) {
+                    var val = parseFloat(ship[key]) || 0;
+                    return val === maxValues[key] && maxValues[key] !== -Infinity;
+                };
+                tr.innerHTML = `
+                    <td class="ship-name-cell">
+                        <img src="${ship.image || 'images/ships/default.png'}" alt="${ship.name}" onerror="this.style.display='none'" />
+                        ${ship.name}
+                    </td>
+                    <td>${ship.type || '?'}</td>
+                    <td>${ship.level || '?'}</td>
+                    <td class="${isBest('durability') ? 'best-value' : ''}">${ship.durability || '?'}</td>
+                    <td class="${isBest('speed') ? 'best-value' : ''}">${ship.speed || '?'}</td>
+                    <td class="${isBest('maneuverability') ? 'best-value' : ''}">${ship.maneuverability || '?'}</td>
+                    <td class="${isBest('armor') ? 'best-value' : ''}">${ship.armor || '?'}</td>
+                    <td class="${isBest('cargo') ? 'best-value' : ''}">${ship.cargo || '?'}</td>
+                    <td class="${isBest('crew') ? 'best-value' : ''}">${ship.crew || '?'}</td>
+                    <td class="${isBest('guns') ? 'best-value' : ''}">${ship.guns || '?'}</td>
+                    <td><button class="remove-ship" onclick="toggleCompare('${ship.name}')">✕</button></td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        // ============================================================
+        // 4. ЗАПУСК
+        // ============================================================
         window.onload = function() {
             setTimeout(loadShips, 300);
         };
