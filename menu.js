@@ -1,10 +1,8 @@
 // menu.js - единое меню для всех страниц
 function loadMenu() {
-    // Проверяем, есть ли блок для меню
     var menuContainer = document.getElementById('menu-container');
     if (!menuContainer) return;
 
-    // Определяем текущую страницу для подсветки
     var currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
     var menuHTML = `
@@ -12,6 +10,7 @@ function loadMenu() {
             <a href="/OplotGuild/" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'index.html' || currentPage === '' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">🏠 Главная</a>
             <a href="/OplotGuild/rules.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'rules.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">📜 Правила</a>
             <a href="/OplotGuild/links.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'links.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">🔗 Ссылки</a>
+            <a href="/OplotGuild/music.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'music.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">🎵 Музыка</a>
             <a href="/OplotGuild/builds.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'builds.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">⚓ Билды 🔒</a>
             <a href="/OplotGuild/tips.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'tips.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">📖 Советы 🔒</a>
             <a href="/OplotGuild/officer.html" style="color: var(--link-color, #e0d6b0); text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; ${currentPage === 'officer.html' ? 'border-bottom: 2px solid #c9a84c; color: #c9a84c;' : ''}">👑 Офицерская</a>
@@ -21,7 +20,6 @@ function loadMenu() {
 
     menuContainer.innerHTML = menuHTML;
 
-    // Переключатель темы
     var themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', function() {
@@ -34,7 +32,6 @@ function loadMenu() {
         });
     }
 
-    // Применяем сохранённую тему
     var savedTheme = localStorage.getItem('theme') || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
     if (themeToggle) {
@@ -42,7 +39,6 @@ function loadMenu() {
     }
 }
 
-// Загружаем меню после загрузки страницы
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadMenu);
 } else {
