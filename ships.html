@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Верфь — ОПЛОТ</title>
+    <base href="/OplotGuild/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #c9a84c;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        /* Группы кораблей */
+        .ship-group {
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        .ship-group h2 {
+            color: #c9a84c;
+            font-size: 1.8rem;
+            border-bottom: 2px solid rgba(201, 168, 76, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ship-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .ship-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            padding: 15px 12px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .ship-card:hover {
+            border-color: #c9a84c;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+        .ship-card img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
+        .ship-card .name {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .ship-card .level {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(201, 168, 76, 0.15);
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 4px 0;
+        }
+        .ship-card .type {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .ship-card .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px 10px;
+            font-size: 0.7rem;
+            width: 100%;
+            margin-top: 6px;
+            color: var(--text-secondary);
+        }
+        .ship-card .stats span {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(201, 168, 76, 0.05);
+            padding: 2px 0;
+        }
+        .ship-card .stats .val {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .ship-card .stats .label {
+            color: var(--text-muted);
+        }
+        .empty-message {
+            color: var(--text-muted);
+            padding: 30px;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+        @media (max-width: 600px) {
+            .ship-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .ship-card img {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-container"></div>
+
+    <div class="container">
+        <h1>⚓ Верфь</h1>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Все корабли World of Sea Battle с характеристиками</p>
+
+        <div id="shipsContainer">
+            <div class="empty-message">⏳ Загрузка кораблей...</div>
+        </div>
+
+        <a href="/OplotGuild/" class="btn-back">← На главную</a>
+    </div>
+
+    <script src="menu.js"></script>
+    <script>
+        function loadShips() {
+            var container = document.getElementById('shipsContainer');
+            container.innerHTML = '<div class="empty-message">⏳ Загрузка кораблей...</div>';
+
+            fetch('ships.json?t=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Файл ships.json не найден');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    container.innerHTML = '';
+                    if (!data.ships || data.ships.length === 0) {
+                        container.innerHTML = '<div class="empty-message">📭 Нет данных о кораблях.</div>';
+                        return;
+                    }
+
+                    // Группируем по типам
+                    var groups = {};
+                    data.ships.forEach(function(ship) {
+                        var type = ship.type || 'Другие';
+                        if (!groups[type]) groups[type] = [];
+                        groups[type].push(ship);
+                    });
+
+                    // Сортируем типы в нужном порядке
+                    var typeOrder = ['Быстроходные', 'Боевые', 'Транспортные', 'Тяжёлые', 'Осадные', 'Имперские', 'Другие'];
+                    var sortedTypes = Object.keys(groups).sort(function(a, b) {
+                        return typeOrder.indexOf(a) - typeOrder.indexOf(b);
+                    });
+
+                    sortedTypes.forEach(function(type) {
+                        var ships = groups[type];
+                        var groupDiv = document.createElement('div');
+                        groupDiv.className = 'ship-group';
+
+                        var header = document.createElement('h2');
+                        header.textContent = type + ' (' + ships.length + ')';
+                        groupDiv.appendChild(header);
+
+                        var grid = document.createElement('div');
+                        grid.className = 'ship-grid';
+
+                        // Сортируем корабли по уровню (от высшего к низшему)
+                        ships.sort(function(a, b) {
+                            return (b.level || 0) - (a.level || 0);
+                        });
+
+                        ships.forEach(function(ship) {
+                            var card = document.createElement('div');
+                            card.className = 'ship-card';
+                            var imgSrc = ship.image || 'images/ships/default.png';
+                            card.innerHTML = `
+                                <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
+                                <div class="name">${ship.name}</div>
+                                <div class="level">Уровень ${ship.level || '?'}</div>
+                                <div class="type">${ship.type || ''}</div>
+                                <div class="stats">
+                                    <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
+                                    <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
+                                    <span><span class="label">🔄 Маневр.</span><span class="val">${ship.maneuverability || '?'}</span></span>
+                                    <span><span class="label">🛡️ Броня</span><span class="val">${ship.armor || '?'}</span></span>
+                                    <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
+                                    <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
+                                    <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
+                                    <span><span class="label">🏴 Тип</span><span class="val">${ship.type || '?'}</span></span>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        });
+
+                        groupDiv.appendChild(grid);
+                        container.appendChild(groupDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки кораблей:', error);
+                    container.innerHTML = '<div class="empty-message">⚠️ Не удалось загрузить корабли. Проверьте файл ships.json.</div>';
+                });
+        }
+
+        window.onload = function() {
+            setTimeout(loadShips, 300);
+        };
+    </script>
+</body>
+</html>
