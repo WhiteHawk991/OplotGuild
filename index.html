@@ -18,20 +18,35 @@
             color: var(--text-primary);
         }
         .main-page {
-            min-height: 80vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             text-align: center;
             color: #e0d6b0;
-            padding: 40px 20px;
+            padding: 40px 20px 60px 20px;
             border-radius: 0;
-            background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)), url('images/OplotImageHome.png') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('images/OplotImageHome.png') center/cover no-repeat;
             background-size: cover;
-            background-position: center;
+            background-position: center 30%;
             width: 100%;
             margin: 0;
+            position: relative;
+        }
+        .main-page::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .main-page > * {
+            position: relative;
+            z-index: 2;
         }
         .main-page h2 {
             font-size: 2.5rem;
@@ -43,11 +58,12 @@
             max-width: 700px;
             font-size: 1.2rem;
             line-height: 1.8;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             padding: 30px 40px;
             border-radius: 15px;
-            border: 1px solid #c9a84c;
+            border: 1px solid rgba(201, 168, 76, 0.3);
             backdrop-filter: blur(2px);
+            margin-bottom: 20px;
         }
         .main-page .description strong {
             color: #c9a84c;
@@ -58,7 +74,7 @@
             margin-top: 15px;
         }
         .btn-gold {
-            margin-top: 30px;
+            margin-top: 10px;
             padding: 15px 45px;
             background: #c9a84c;
             color: #1a1a2e;
@@ -79,17 +95,17 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-top: 35px;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
         }
         .stat-item {
             background: rgba(0,0,0,0.5);
-            padding: 15px;
+            padding: 15px 10px;
             border-radius: 10px;
-            border: 1px solid #c9a84c;
+            border: 1px solid rgba(201, 168, 76, 0.3);
             backdrop-filter: blur(2px);
             transition: 0.3s;
         }
@@ -106,14 +122,15 @@
             font-size: 0.85rem;
             color: #b8a88a;
         }
-        /* Адаптация для мобильных */
         @media (max-width: 600px) {
             .main-page {
-                min-height: 70vh;
-                padding: 20px 15px;
+                min-height: 100vh;
+                padding: 20px 15px 40px 15px;
+                background-position: center 40%;
             }
             .main-page h2 {
                 font-size: 1.8rem;
+                margin-bottom: 20px;
             }
             .main-page .description {
                 padding: 20px;
@@ -126,6 +143,7 @@
             .stats-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
+                max-width: 100%;
             }
             .stat-item .number {
                 font-size: 1.5rem;
@@ -142,7 +160,7 @@
     <div class="main-page">
         <h2>Стоим насмерть</h2>
         <div class="description">
-            <p><strong>ОПЛОТ</strong> — это торговая гильдия в мире WOSB, где честь и братство важнее рейтинга.</p>
+            <p><strong>ОПЛОТ</strong> — это гильдия ветеранов WOSB, где честь и братство важнее рейтинга.</p>
             <p>Мы сражаемся как единый механизм, прикрываем спины друг друга и не бросаем своих в бою.</p>
             <p class="quote">«Победа — это когда все вернулись домой».</p>
         </div>
