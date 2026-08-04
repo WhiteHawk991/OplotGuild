@@ -3,14 +3,14 @@
     {
       "id": 1,
       "title": "Молот ОПЛОТа",
-      "file": "music/«Молот ОПЛОТа».mp3",
-      "description": "Наш боевой гимн"
+      "file": "Music/«Молот ОПЛОТа».mp3",
+      "description": ""
     },
     {
       "id": 2,
-      "title": "Марш пиратов",
-      "file": "music/march.mp3",
-      "description": "Для поднятия духа"
+      "title": "Сага о торговце",
+      "file": "music/«Сага о торговце».mp3",
+      "description": ""
     }
   ]
 }
