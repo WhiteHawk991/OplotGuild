@@ -29,23 +29,31 @@
             padding-bottom: 10px;
             display: inline-block;
         }
-        .ship-group {
+        .ship-type-group {
             margin-bottom: 40px;
             text-align: left;
         }
-        .ship-group h2 {
+        .ship-type-group > h2 {
             color: #c9a84c;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             border-bottom: 2px solid rgba(201, 168, 76, 0.3);
             padding-bottom: 8px;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        }
+        .ship-level-group {
+            margin-bottom: 25px;
+        }
+        .ship-level-group h3 {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            border-left: 3px solid #c9a84c;
+            padding-left: 12px;
         }
         .ship-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 12px;
         }
         .ship-card {
@@ -223,7 +231,7 @@
         }
         @media (max-width: 600px) {
             .ship-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             }
             .ship-card img {
                 width: 50px;
@@ -285,11 +293,10 @@
         // ============================================================
         var allShips = [];
         var comparedShips = [];
-        // ПРАВИЛЬНЫЙ ПОРЯДОК (как вы просили)
         var typeOrder = ['Быстроходные', 'Боевые', 'Транспортные', 'Осадные', 'Тяжелые', 'Имперские', 'Премиум'];
 
         // ============================================================
-        // 2. ЗАГРУЗКА И ОТОБРАЖЕНИЕ
+        // 2. ЗАГРУЗКА И ОТОБРАЖЕНИЕ (С ГРУППИРОВКОЙ ПО ТИПАМ И РАНГАМ)
         // ============================================================
         function loadShips() {
             var container = document.getElementById('shipsContainer');
@@ -308,58 +315,83 @@
                         return;
                     }
 
-                    // Группировка
-                    var groups = {};
+                    // Группируем по типам
+                    var groupsByType = {};
                     allShips.forEach(function(ship) {
                         var type = ship.type || 'Другие';
-                        if (!groups[type]) groups[type] = [];
-                        groups[type].push(ship);
+                        if (!groupsByType[type]) groupsByType[type] = [];
+                        groupsByType[type].push(ship);
                     });
 
-                    var sortedTypes = Object.keys(groups).sort(function(a, b) {
+                    // Сортируем типы в нужном порядке
+                    var sortedTypes = Object.keys(groupsByType).sort(function(a, b) {
                         return typeOrder.indexOf(a) - typeOrder.indexOf(b);
                     });
 
                     sortedTypes.forEach(function(type) {
-                        var ships = groups[type];
-                        var groupDiv = document.createElement('div');
-                        groupDiv.className = 'ship-group';
+                        var shipsOfType = groupsByType[type];
+                        var typeDiv = document.createElement('div');
+                        typeDiv.className = 'ship-type-group';
 
-                        var header = document.createElement('h2');
-                        header.textContent = type + ' (' + ships.length + ')';
-                        groupDiv.appendChild(header);
+                        var typeHeader = document.createElement('h2');
+                        typeHeader.textContent = type + ' (' + shipsOfType.length + ')';
+                        typeDiv.appendChild(typeHeader);
 
-                        var grid = document.createElement('div');
-                        grid.className = 'ship-grid';
-
-                        ships.sort(function(a, b) { return (b.level || 0) - (a.level || 0); });
-
-                        ships.forEach(function(ship) {
-                            var card = document.createElement('div');
-                            card.className = 'ship-card';
-                            card.dataset.shipKey = ship.name;
-                            var imgSrc = ship.image || 'images/ships/default.png';
-                            var isCompared = comparedShips.some(s => s.name === ship.name);
-                            card.innerHTML = `
-                                <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
-                                <div class="name">${ship.name}</div>
-                                <div class="level">Уровень ${ship.level || '?'}</div>
-                                <div class="stats">
-                                    <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
-                                    <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
-                                    <span><span class="label">🔄 Маневр.</span><span class="val">${ship.maneuverability || '?'}</span></span>
-                                    <span><span class="label">🛡️ Броня</span><span class="val">${ship.armor || '?'}</span></span>
-                                    <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
-                                    <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
-                                    <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
-                                </div>
-                                <button class="compare-btn ${isCompared ? 'active' : ''}" onclick="toggleCompare('${ship.name}')">${isCompared ? '✓ В сравнении' : '+ Сравнить'}</button>
-                            `;
-                            grid.appendChild(card);
+                        // Группируем по уровням (рангам) внутри типа
+                        var groupsByLevel = {};
+                        shipsOfType.forEach(function(ship) {
+                            var level = ship.level || 0;
+                            if (!groupsByLevel[level]) groupsByLevel[level] = [];
+                            groupsByLevel[level].push(ship);
                         });
 
-                        groupDiv.appendChild(grid);
-                        container.appendChild(groupDiv);
+                        // Сортируем уровни от высшего к низшему (VII → I)
+                        var sortedLevels = Object.keys(groupsByLevel).sort(function(a, b) {
+                            return parseInt(b) - parseInt(a);
+                        });
+
+                        sortedLevels.forEach(function(level) {
+                            var shipsOfLevel = groupsByLevel[level];
+                            var levelDiv = document.createElement('div');
+                            levelDiv.className = 'ship-level-group';
+
+                            var levelHeader = document.createElement('h3');
+                            var levelRoman = getRomanNumeral(parseInt(level));
+                            levelHeader.textContent = 'Уровень ' + level + ' (' + levelRoman + ') — ' + shipsOfLevel.length + ' кораблей';
+                            levelDiv.appendChild(levelHeader);
+
+                            var grid = document.createElement('div');
+                            grid.className = 'ship-grid';
+
+                            shipsOfLevel.forEach(function(ship) {
+                                var card = document.createElement('div');
+                                card.className = 'ship-card';
+                                card.dataset.shipKey = ship.name;
+                                var imgSrc = ship.image || 'images/ships/default.png';
+                                var isCompared = comparedShips.some(s => s.name === ship.name);
+                                card.innerHTML = `
+                                    <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
+                                    <div class="name">${ship.name}</div>
+                                    <div class="level">Уровень ${ship.level || '?'}</div>
+                                    <div class="stats">
+                                        <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
+                                        <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
+                                        <span><span class="label">🔄 Маневр.</span><span class="val">${ship.maneuverability || '?'}</span></span>
+                                        <span><span class="label">🛡️ Броня</span><span class="val">${ship.armor || '?'}</span></span>
+                                        <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
+                                        <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
+                                        <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
+                                    </div>
+                                    <button class="compare-btn ${isCompared ? 'active' : ''}" onclick="toggleCompare('${ship.name}')">${isCompared ? '✓ В сравнении' : '+ Сравнить'}</button>
+                                `;
+                                grid.appendChild(card);
+                            });
+
+                            levelDiv.appendChild(grid);
+                            typeDiv.appendChild(levelDiv);
+                        });
+
+                        container.appendChild(typeDiv);
                     });
                 })
                 .catch(error => {
@@ -369,7 +401,15 @@
         }
 
         // ============================================================
-        // 3. СРАВНЕНИЕ
+        // 3. ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ РИМСКИХ ЦИФР
+        // ============================================================
+        function getRomanNumeral(num) {
+            var roman = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+            return roman[num] || num;
+        }
+
+        // ============================================================
+        // 4. СРАВНЕНИЕ (БЕЗ ИЗМЕНЕНИЙ)
         // ============================================================
         function toggleCompare(shipName) {
             var ship = allShips.find(s => s.name === shipName);
@@ -386,7 +426,6 @@
                 comparedShips.push(ship);
             }
             updateCompareUI();
-            // Обновляем кнопки на карточках
             document.querySelectorAll('.ship-card').forEach(function(card) {
                 var btn = card.querySelector('.compare-btn');
                 if (!btn) return;
@@ -412,7 +451,6 @@
             wrap.style.display = 'block';
             body.innerHTML = '';
 
-            // Определяем максимальные значения
             var maxValues = {
                 durability: -Infinity,
                 speed: -Infinity,
@@ -456,7 +494,7 @@
         }
 
         // ============================================================
-        // 4. ЗАПУСК
+        // 5. ЗАПУСК
         // ============================================================
         window.onload = function() {
             setTimeout(loadShips, 300);
