@@ -522,4 +522,157 @@
                     
                     var tagsHtml = '';
                     if (build.shipType) {
-                        tagsHtml += `<
+                        tagsHtml += `<span class="tag">${build.shipType}</span>`;
+                    }
+                    if (build.armament && build.armament.toLowerCase().includes('дальнобойные')) {
+                        tagsHtml += `<span class="tag">🎯 Дальний бой</span>`;
+                    }
+                    
+                    card.innerHTML = `
+                        ${imageHtml}
+                        <div class="card-title">${build.shipName}</div>
+                        ${armamentHtml}
+                        ${upgradesHtml}
+                        <div class="card-description">${build.description}</div>
+                        ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+                        <div class="card-author">✍️ ${build.author}</div>
+                        <button class="share-btn" onclick="shareBuild('${build.shipName}', '${build.description}', '${build.author}')">🔗 Поделиться</button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                groupDiv.appendChild(grid);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        // ==================== ПОИСК И ФИЛЬТРАЦИЯ ====================
+        function filterBuilds() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            var typeFilter = document.getElementById('typeFilter').value;
+
+            var filtered = allBuilds.filter(function(build) {
+                var matchSearch = true;
+                var matchType = true;
+
+                if (searchTerm) {
+                    matchSearch = build.shipName.toLowerCase().includes(searchTerm) ||
+                                  build.description.toLowerCase().includes(searchTerm) ||
+                                  build.author.toLowerCase().includes(searchTerm) ||
+                                  (build.armament && build.armament.toLowerCase().includes(searchTerm)) ||
+                                  (build.upgrades && build.upgrades.toLowerCase().includes(searchTerm));
+                }
+
+                if (typeFilter) {
+                    matchType = build.shipType === typeFilter;
+                }
+
+                return matchSearch && matchType;
+            });
+
+            renderBuilds(filtered);
+        }
+
+        // ==================== КНОПКА "ПОДЕЛИТЬСЯ" ====================
+        function shareBuild(shipName, description, author) {
+            var url = window.location.href;
+            var text = `⚓ ${shipName}\n📝 ${description}\n✍️ ${author}\n\nПодробнее: ${url}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: shipName,
+                    text: text,
+                    url: url
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text).then(function() {
+                    alert('✅ Ссылка на билд скопирована в буфер обмена!');
+                }).catch(function() {
+                    prompt('Скопируйте ссылку:', text);
+                });
+            }
+        }
+
+        // ==================== ОТПРАВКА БИЛДА ====================
+        function submitBuild(event) {
+            event.preventDefault();
+
+            var shipName = document.getElementById('shipName').value.trim();
+            var shipType = document.getElementById('shipType').value;
+            var armament = document.getElementById('armament').value.trim();
+            var upgrades = document.getElementById('upgrades').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var imageUrl = document.getElementById('imageUrl').value.trim();
+            var author = document.getElementById('author').value.trim();
+            var fileInput = document.getElementById('imageFile');
+            var file = fileInput.files[0];
+            var messageDiv = document.getElementById('buildMessage');
+
+            if (!shipName || !shipType || !description || !author) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Заполните все обязательные поля!';
+                return;
+            }
+
+            if (file && file.size > 10 * 1024 * 1024) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Файл слишком большой! Максимальный размер — 10 МБ.';
+                return;
+            }
+
+            var formData = new FormData();
+            var content = `**📝 Предложен новый билд!**\n\n**Корабль:** ${shipName}\n**Тип:** ${shipType}\n**Автор:** ${author}\n**Вооружение:** ${armament || 'Не указано'}\n**Апгрейды:** ${upgrades || 'Не указаны'}\n**Описание:** ${description}`;
+            formData.append('content', content);
+
+            if (imageUrl) {
+                var embed = {
+                    title: "⚓ " + shipName,
+                    color: 0xc9a84c,
+                    fields: [
+                        { name: "Тип", value: shipType, inline: true },
+                        { name: "Автор", value: author, inline: true },
+                        { name: "Вооружение", value: armament || "Не указано", inline: false },
+                        { name: "Апгрейды", value: upgrades || "Не указаны", inline: false },
+                        { name: "Описание", value: description, inline: false }
+                    ],
+                    image: { url: imageUrl },
+                    timestamp: new Date().toISOString()
+                };
+                formData.append('embeds', JSON.stringify([embed]));
+            }
+
+            if (file) {
+                formData.append('files[0]', file);
+            }
+
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = '✅ Билд успешно отправлен! Спасибо за вклад в развитие гильдии.';
+                    document.getElementById('buildSubmissionForm').reset();
+                    document.getElementById('filePreview').style.display = 'none';
+                    setTimeout(() => {
+                        document.getElementById('buildForm').classList.add('hidden');
+                    }, 3000);
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(`Ошибка ${response.status}: ${text}`);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error';
+                messageDiv.textContent = '❌ Не удалось отправить билд. Попробуйте позже.';
+            });
+        }
+    </script>
+</body>
+</html>
