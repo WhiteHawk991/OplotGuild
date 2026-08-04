@@ -56,6 +56,21 @@
             border-left: 3px solid #c9a84c;
             margin-bottom: 30px;
         }
+        .section-desc ul {
+            list-style: none;
+            padding-left: 10px;
+        }
+        .section-desc ul li {
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .section-desc ul li::before {
+            content: '⚓';
+            color: #c9a84c;
+            position: absolute;
+            left: 0;
+        }
         .accordion {
             margin: 20px 0;
         }
@@ -237,14 +252,22 @@
     <div class="container">
         <h1>⚓ ОПЛОТ</h1>
 
-        <!-- ОПИСАНИЕ ГИЛЬДИИ -->
+        <!-- ОПИСАНИЕ ГИЛЬДИИ (с новыми пунктами) -->
         <div class="section-desc">
             <p><strong>ОПЛОТ</strong> — это братство капитанов, купцов и искателей приключений. Мы держимся вместе, чтобы торговать, защищать союзников и строить империю. Наша сила — в честном слове и взаимовыручке.</p>
             <p>«Победа — это когда все вернулись домой с полными трюмами и чистой совестью.»</p>
-            <p>Присоединяйся к нам, если готов стать частью команды.</p>
+            <p><strong>Жизнь гильдии:</strong></p>
+            <ul>
+                <li>Помогаем новичкам осваиваться в игре.</li>
+                <li>Проводим акции для получения кораблей.</li>
+                <li>Устраиваем внутригильдийные события с наградами.</li>
+                <li>Организуем рейды по марочным цехам.</li>
+                <li>Собираем рейды в круг для фарма ресурсов.</li>
+            </ul>
+            <p style="margin-top: 15px;">Присоединяйся к нам, если готов стать частью команды.</p>
         </div>
 
-        <!-- РАЗДЕЛ ПРАВИЛ (АККОРДЕОН) -->
+        <!-- РАЗДЕЛ ПРАВИЛ -->
         <h2>📜 Устав гильдии</h2>
         <div class="accordion">
 
@@ -263,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- Статья 2 -->
+            <!-- Статья 2 (исправлена) -->
             <div class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
                     <span>⏳ Статья 2. Активность</span>
@@ -271,7 +294,7 @@
                 </div>
                 <div class="accordion-body">
                     <ul>
-                        <li><strong>2.1.</strong> Минимум 2 совместных рейда в неделю. Если пропускаете — предупреждаем в lolk.</li>
+                        <li><strong>2.1.</strong> Участие в событии <strong>ТЕНДЕР</strong> — обязательная часть жизни гильдии.</li>
                         <li><strong>2.2.</strong> В гильдии ведётся контроль активности участников.</li>
                     </ul>
                 </div>
@@ -333,7 +356,7 @@
                 </div>
             </div>
 
-            <!-- СТАТЬЯ 7 — СТРИМЕРЫ (добавлена отдельно) -->
+            <!-- Статья 7 -->
             <div class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
                     <span>🎥 Статья 7. Стримеры</span>
