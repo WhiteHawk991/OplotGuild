@@ -1,0 +1,82 @@
+{
+  "ships": [
+    {
+      "name": "Pickle",
+      "type": "Быстроходные",
+      "level": 7,
+      "durability": 700,
+      "speed": 9.2,
+      "maneuverability": 94,
+      "armor": 1.6,
+      "cargo": 6000,
+      "crew": 66,
+      "guns": 12,
+      "image": "images/ships/pickle.png"
+    },
+    {
+      "name": "Le Cerf",
+      "type": "Быстроходные",
+      "level": 6,
+      "durability": 900,
+      "speed": 10,
+      "maneuverability": 97,
+      "armor": 1.8,
+      "cargo": 8000,
+      "crew": 78,
+      "guns": 18,
+      "image": "images/ships/le-cerf.png"
+    },
+    {
+      "name": "La Creole",
+      "type": "Быстроходные",
+      "level": 5,
+      "durability": 1400,
+      "speed": 11,
+      "maneuverability": 100,
+      "armor": 2,
+      "cargo": 11000,
+      "crew": 96,
+      "guns": 28,
+      "image": "images/ships/la-creole.png"
+    },
+    {
+      "name": "Surprise",
+      "type": "Быстроходные",
+      "level": 4,
+      "durability": 1680,
+      "speed": 10.5,
+      "maneuverability": 105,
+      "armor": 2.4,
+      "cargo": 13000,
+      "crew": 112,
+      "guns": 38,
+      "image": "images/ships/surprise.png"
+    },
+    {
+      "name": "Horizon",
+      "type": "Боевые",
+      "level": 7,
+      "durability": 850,
+      "speed": 8.4,
+      "maneuverability": 80,
+      "armor": 3.2,
+      "cargo": 7000,
+      "crew": 78,
+      "guns": 18,
+      "image": "images/ships/horizon.png"
+    },
+    {
+      "name": "La Salamandre",
+      "type": "Боевые",
+      "level": 6,
+      "durability": 1160,
+      "speed": 8.8,
+      "maneuverability": 82,
+      "armor": 3.6,
+      "cargo": 9500,
+      "crew": 96,
+      "guns": 22,
+      "image": "images/ships/la-salamandre.png"
+    }
+  ]
+}
