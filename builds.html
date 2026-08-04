@@ -574,23 +574,16 @@
         }
 
         // ==================== КНОПКА "ПОДЕЛИТЬСЯ" ====================
-        function shareBuild(shipName, description, author) {
-            var url = window.location.href;
-            var text = `⚓ ${shipName}\n📝 ${description}\n✍️ ${author}\n\nПодробнее: ${url}`;
-            if (navigator.share) {
-                navigator.share({
-                    title: shipName,
-                    text: text,
-                    url: url
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(text).then(function() {
-                    alert('✅ Ссылка на билд скопирована в буфер обмена!');
-                }).catch(function() {
-                    prompt('Скопируйте ссылку:', text);
-                });
-            }
-        }
+   function shareBuild(shipName, description, author) {
+    var url = window.location.href;
+    var text = `⚓ ${shipName}\n📝 ${description}\n✍️ ${author}\n\nПодробнее: ${url}`;
+    
+    navigator.clipboard.writeText(text).then(function() {
+        alert('✅ Ссылка на билд скопирована в буфер обмена!');
+    }).catch(function() {
+        prompt('Скопируйте ссылку:', text);
+    });
+}
 
         // ==================== ОТПРАВКА БИЛДА ====================
         function submitBuild(event) {
