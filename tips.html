@@ -7,11 +7,12 @@
     <base href="/OplotGuild/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/theme.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
         body {
-            background: #0a0a15;
-            color: #e0d6b0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             font-family: 'Helvetica Neue', Arial, sans-serif;
             padding: 0;
             margin: 0;
@@ -27,7 +28,7 @@
             margin-bottom: 20px;
         }
         .message-box {
-            background: rgba(26, 26, 46, 0.8);
+            background: var(--card-bg);
             padding: 40px;
             border-radius: 10px;
             border: 1px solid #c9a84c;
@@ -37,10 +38,10 @@
         }
         .message-box p {
             font-size: 1.2rem;
-            color: #b8a88a;
+            color: var(--text-secondary);
         }
         .form-box {
-            background: rgba(26, 26, 46, 0.8);
+            background: var(--card-bg);
             padding: 25px;
             border-radius: 10px;
             border: 1px solid #c9a84c;
@@ -50,8 +51,8 @@
         .form-box input[type="password"] {
             width: 100%;
             padding: 10px;
-            background: #0a0a15;
-            color: #e0d6b0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             border: 1px solid #c9a84c;
             border-radius: 5px;
             margin-bottom: 15px;
@@ -119,7 +120,7 @@
             margin-top: 20px;
         }
         .tip-card {
-            background: rgba(26, 26, 46, 0.8);
+            background: var(--card-bg);
             padding: 20px;
             border-radius: 10px;
             border: 1px solid #c9a84c;
@@ -130,21 +131,13 @@
             margin-top: 0;
         }
         .tip-card p {
-            color: #b8a88a;
+            color: var(--text-secondary);
             line-height: 1.6;
         }
     </style>
 </head>
 <body>
-    <!-- МЕНЮ -->
-    <nav style="display: flex; justify-content: center; gap: 30px; padding: 15px 20px; background: rgba(10, 10, 21, 0.9); border-bottom: 2px solid #c9a84c; margin-bottom: 20px; flex-wrap: wrap;">
-        <a href="/OplotGuild/" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🏠 Главная</a>
-        <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">📜 Правила</a>
-        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">⚓ Билды 🔒</a>
-        <a href="/OplotGuild/tips.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">📖 Советы 🔒</a>
-        <a href="/OplotGuild/links.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🔗 Ссылки</a>
-        <a href="/OplotGuild/officer.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">👑 Офицерская</a>
-    </nav>
+    <div id="menu-container"></div>
 
     <div class="container">
         <div id="content-protected" style="display: none;">
@@ -192,6 +185,7 @@
         </div>
     </div>
 
+    <script src="menu.js"></script>
     <script>
         const CORRECT_PASSWORD = "oplot2026"; // СМЕНИТЕ ПАРОЛЬ!
         const STORAGE_KEY = "oplot_tips_authorized";
