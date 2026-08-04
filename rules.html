@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Правила гильдии ОПЛОТ</title>
+    <title>Устав гильдии ОПЛОТ</title>
     <base href="/OplotGuild/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
         body {
-            background: linear-gradient(rgba(10, 10, 21, 0.75), rgba(10, 10, 21, 0.85)), url('images/rules.jpg') center/cover no-repeat fixed;
+            background: linear-gradient(rgba(10, 10, 21, 0.8), rgba(10, 10, 21, 0.9)), url('images/rules.jpg') center/cover no-repeat fixed;
             background-size: cover;
             min-height: 100vh;
             color: #e0d6b0;
@@ -54,13 +54,14 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             border-left: 3px solid #c9a84c;
+            margin-bottom: 30px;
         }
-        /* Аккордеон (раскрывающиеся списки) */
+        /* Аккордеон */
         .accordion {
             margin: 20px 0;
         }
         .accordion-item {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(201, 168, 76, 0.2);
             border-radius: 10px;
             margin-bottom: 10px;
@@ -98,18 +99,37 @@
         }
         .accordion-body.open {
             padding: 15px 20px;
-            max-height: 800px;
+            max-height: 1200px;
         }
         .accordion-body ul {
             padding-left: 20px;
+            list-style: none;
         }
         .accordion-body ul li {
             margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .accordion-body ul li::before {
+            content: '▹';
+            color: #c9a84c;
+            position: absolute;
+            left: 0;
         }
         .accordion-body ul li strong {
             color: #c9a84c;
         }
-        /* Форма заявки (свиток) */
+        .highlight-box {
+            border: 1px solid #c9a84c;
+            background: rgba(201, 168, 76, 0.08);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .highlight-box strong {
+            color: #c9a84c;
+        }
+        /* Форма заявки */
         .scroll-form {
             margin-top: 40px;
             padding: 30px;
@@ -231,77 +251,67 @@
 
         <!-- ОПИСАНИЕ ГИЛЬДИИ -->
         <div class="section-desc">
-            <p><strong>ОПЛОТ</strong> — это не просто гильдия в мире WOSB. Это братство торговцев, моряков и искателей приключений, которые держатся вместе. Мы не просто возим товары — мы создаём торговые пути, защищаем союзников и строим империю. Наша сила — в честном слове, крепкой дружбе и общем деле.</p>
-            <p>Мы верим, что победа — это когда все вернулись домой с полными трюмами и чистой совестью. Присоединяйся к нам, если готов торговать, сражаться и строить будущее вместе.</p>
+            <p><strong>ОПЛОТ</strong> — это братство капитанов, купцов и искателей приключений. Мы держимся вместе, чтобы торговать, защищать союзников и строить империю. Наша сила — в честном слове и взаимовыручке.</p>
+            <p>«Победа — это когда все вернулись домой с полными трюмами и чистой совестью.»</p>
+            <p>Присоединяйся к нам, если готов стать частью команды.</p>
         </div>
 
         <!-- РАЗДЕЛ ПРАВИЛ (АККОРДЕОН) -->
         <h2>📜 Устав гильдии</h2>
         <div class="accordion">
 
+            <!-- Статья 1 -->
             <div class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>⚔️ Статья 1. Честь и уважение</span>
+                    <span>🤝 Основные правила</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div class="accordion-body">
-                    <p><strong>1.1.</strong> Мы играем честно. Использование сторонних программ, дающих преимущество, запрещено.</p>
-                    <p><strong>1.2.</strong> Уважение к союзникам и противникам — основа нашей репутации. Оскорбления и токсичность недопустимы.</p>
+                    <ul>
+                        <li><strong>Дружелюбие:</strong> Общайтесь уважительно. Оскорбления, агрессия и травля запрещены.</li>
+                        <li><strong>Без политики:</strong> Мы — капитаны, а не политики. Запрещены обсуждения политики, религии и национальных конфликтов.</li>
+                        <li><strong>Не разжигайте ненависть:</strong> Любые высказывания, унижающие человека по любому признаку, запрещены.</li>
+                        <li><strong>Не флудите:</strong> Уважайте право других на спокойное общение.</li>
+                        <li><strong>Слушайте офицеров:</strong> Их замечания — чтобы в канале было комфортно всем.</li>
+                        <li><strong>Пьяный дебош в голосовом канале недопустим:</strong> Офицеры имеют право замьютить нарушителей без предупреждения.</li>
+                    </ul>
                 </div>
             </div>
 
+            <!-- Статья 2 -->
             <div class="accordion-item">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>⏳ Статья 2. Активность и участие</span>
+                    <span>🎥 Правила для стримеров</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div class="accordion-body">
-                    <p><strong>2.1.</strong> Минимум <strong>2 совместных рейда</strong> в неделю. Если вы не можете участвовать — предупредите в канале Lolk.</p>
-                    <p><strong>2.2.</strong> Долгое отсутствие без предупреждения может привести к исключению из гильдии.</p>
+                    <ul>
+                        <li><strong>Уважайте приватность:</strong> Внутренние голосовые обсуждения (тактика, личные разговоры) не должны попадать в трансляцию без согласия участников.</li>
+                        <li><strong>Для стримов создан отдельный канал</strong> — «🔴 Для трансляций». Подключаясь в него, вы автоматически соглашаетесь на то, что ваш голос может быть слышен зрителям.</li>
+                        <li><strong>Стример обязан предупреждать заранее</strong> (например, закрепленным сообщением) о включении трансляции и указывать канал.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div class="accordion-item">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>📡 Статья 3. Связь</span>
+            <!-- СТАТЬЯ 3 — НОВОВВЕДЕНИЕ (ВЫДЕЛЕНО) -->
+            <div class="accordion-item" style="border-color: #c9a84c; background: rgba(201, 168, 76, 0.05);">
+                <div class="accordion-header" onclick="toggleAccordion(this)" style="background: rgba(201, 168, 76, 0.12);">
+                    <span>📢 НОВОВВЕДЕНИЕ: Контроль активности</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div class="accordion-body">
-                    <p><strong>3.1.</strong> Обязательное присутствие в голосовом канале Lolk во время боевых выходов.</p>
-                    <p><strong>3.2.</strong> Для обсуждения тактик и оперативных задач используйте текстовые каналы.</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>🎯 Статья 4. Дисциплина в бою</span>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="accordion-body">
-                    <p><strong>4.1.</strong> В бою слушаем капитана или старпома. Своеволие допустимо только в разведке и при выполнении особых задач.</p>
-                    <p><strong>4.2.</strong> Не покидайте строй без приказа.</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>📅 Статья 5. Возраст и поручительство</span>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="accordion-body">
-                    <p><strong>5.1.</strong> Возраст кандидатов — от 18 лет.</p>
-                    <p><strong>5.2.</strong> Молодые мичманы (до 18 лет) принимаются только по личному поручительству действующего члена гильдии.</p>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <div class="accordion-header" onclick="toggleAccordion(this)">
-                    <span>🤝 Статья 6. Взаимопомощь</span>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="accordion-body">
-                    <p><strong>6.1.</strong> Если кто-то из гильдии в беде (отбился, тонет, попал в засаду) — обязаны помочь, даже ценой своего корабля.</p>
-                    <p><strong>6.2.</strong> Мы не оставляем своих.</p>
+                    <div class="highlight-box">
+                        <p><strong>📊 Еженедельная норма:</strong> <strong>5 очков влияния</strong> в неделю.</p>
+                    </div>
+                    <ul>
+                        <li><strong>Как закрыть норму:</strong> Миссии в таверне, Тендеры, крафт кораблей I–II ранга, любые действия, приносящие очки влияния.</li>
+                        <li><strong>Компенсация:</strong> Если не хватает очков — 1 очко = 200 сундуков.</li>
+                        <li><strong>Для кого:</strong> Для всех участников гильдии. Исключения — новые участники (в период адаптации) и те, кто предупредил о своём отсутствии.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <p><strong>🗓️ Вступает в силу:</strong> с <strong>06.08.2026</strong>.</p>
+                        <p style="margin-top: 8px;">Следите за прогрессом, офицеры на связи 💬</p>
+                    </div>
                 </div>
             </div>
 
@@ -356,7 +366,7 @@
             }
         }
 
-        // Отправка формы (как было)
+        // Отправка формы
         var webhookUrl = "https://lolka.app/api/webhooks/819153661936640/ODE5MTUzNjYxOTM2NjQw.kj6o0Hyh33V7p15sglL-tABDQJ7vFgHTkMamcvTuPSA";
 
         function submitForm(event) {
