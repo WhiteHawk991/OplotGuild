@@ -1,0 +1,51 @@
+/* theme.css - переменные для тем */
+:root {
+    --bg-primary: #0a0a15;
+    --bg-secondary: rgba(26, 26, 46, 0.8);
+    --text-primary: #e0d6b0;
+    --text-secondary: #b8a88a;
+    --text-muted: #6a6a7e;
+    --border-color: #c9a84c;
+    --card-bg: rgba(26, 26, 46, 0.8);
+    --link-color: #e0d6b0;
+    --menu-bg: rgba(10, 10, 21, 0.9);
+    --shadow-color: rgba(201, 168, 76, 0.1);
+}
+
+body[data-theme="light"] {
+    --bg-primary: #f5f0e8;
+    --bg-secondary: rgba(255, 255, 255, 0.9);
+    --text-primary: #1a1a2e;
+    --text-secondary: #333333;
+    --text-muted: #555555;
+    --border-color: #c9a84c;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --link-color: #1a1a2e;
+    --menu-bg: rgba(240, 235, 225, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s, color 0.3s;
+}
+
+/* Стили для карточек и блоков */
+.message-box,
+.form-box,
+.build-card,
+.event-item {
+    background: var(--card-bg);
+    color: var(--text-primary);
+}
+
+/* Стили для ссылок в меню */
+nav a {
+    color: var(--link-color) !important;
+}
+
+/* Стили для текста */
+.text-muted {
+    color: var(--text-muted) !important;
+}
