@@ -1,0 +1,16 @@
+{
+  "songs": [
+    {
+      "id": 1,
+      "title": "Гимн гильдии ОПЛОТ",
+      "file": "music/gimn.mp3",
+      "description": "Наш боевой гимн"
+    },
+    {
+      "id": 2,
+      "title": "Марш пиратов",
+      "file": "music/march.mp3",
+      "description": "Для поднятия духа"
+    }
+  ]
+}
