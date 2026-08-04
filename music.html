@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Музыка гильдии — ОПЛОТ</title>
+    <base href="/OplotGuild/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <style>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #c9a84c;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .player-wrapper {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #c9a84c;
+            margin: 30px 0;
+        }
+        .player-wrapper audio {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .songs-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .song-item {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .song-item:hover {
+            border-color: #c9a84c;
+            background: rgba(201, 168, 76, 0.05);
+        }
+        .song-item .info .title {
+            font-weight: bold;
+            color: #c9a84c;
+        }
+        .song-item .info .desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .song-item .play-btn {
+            background: #c9a84c;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .song-item .play-btn:hover {
+            background: #e0d6b0;
+            transform: scale(1.1);
+        }
+        .song-item .play-btn.playing {
+            background: #ff6b6b;
+            color: white;
+        }
+        .empty-message {
+            color: var(--text-muted);
+            padding: 30px;
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            background: #c9a84c;
+            color: #0a0a15;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-container"></div>
+
+    <div class="container">
+        <h1>🎵 Гимны и музыка</h1>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Музыка для поднятия духа и боевого настроя</p>
+
+        <div class="player-wrapper" id="playerWrapper">
+            <div style="margin-bottom: 15px;">
+                <span id="currentSongTitle" style="color: #c9a84c; font-weight: bold;">Выберите песню</span>
+            </div>
+            <audio id="audioPlayer" controls style="width: 100%; border-radius: 10px;">
+                <source src="" type="audio/mpeg">
+                Ваш браузер не поддерживает аудиоплеер.
+            </audio>
+        </div>
+
+        <div id="songsList" class="songs-list">
+            <div class="empty-message">⏳ Загрузка песен...</div>
+        </div>
+
+        <a href="/OplotGuild/" class="btn-back">← На главную</a>
+    </div>
+
+    <script src="menu.js"></script>
+    <script>
+        var currentPlayer = document.getElementById('audioPlayer');
+        var currentTitle = document.getElementById('currentSongTitle');
+        var currentSongId = null;
+
+        function loadSongs() {
+            var container = document.getElementById('songsList');
+            container.innerHTML = '<div class="empty-message">⏳ Загрузка песен...</div>';
+
+            fetch('music.json?t=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Файл music.json не найден');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    container.innerHTML = '';
+                    if (!data.songs || data.songs.length === 0) {
+                        container.innerHTML = '<div class="empty-message">📭 Нет песен. Добавьте их в music.json.</div>';
+                        return;
+                    }
+
+                    data.songs.forEach(function(song) {
+                        var div = document.createElement('div');
+                        div.className = 'song-item';
+                        div.dataset.id = song.id;
+                        div.dataset.file = song.file;
+                        div.innerHTML = `
+                            <div class="info">
+                                <div class="title">${song.title}</div>
+                                <div class="desc">${song.description || ''}</div>
+                            </div>
+                            <button class="play-btn" id="btn-${song.id}" onclick="playSong(${song.id}, '${song.file}', '${song.title}')">▶️</button>
+                        `;
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки песен:', error);
+                    container.innerHTML = '<div class="empty-message">⚠️ Не удалось загрузить песни. Проверьте наличие файла music.json.</div>';
+                });
+        }
+
+        function playSong(id, file, title) {
+            // Останавливаем текущий плеер
+            if (currentPlayer.src && !currentPlayer.paused) {
+                currentPlayer.pause();
+            }
+
+            // Обновляем плеер
+            currentPlayer.src = file;
+            currentPlayer.load();
+            currentPlayer.play();
+
+            // Обновляем заголовок
+            currentTitle.textContent = title;
+
+            // Обновляем кнопки
+            document.querySelectorAll('.play-btn').forEach(function(btn) {
+                btn.textContent = '▶️';
+                btn.classList.remove('playing');
+            });
+
+            var activeBtn = document.getElementById('btn-' + id);
+            if (activeBtn) {
+                activeBtn.textContent = '⏸️';
+                activeBtn.classList.add('playing');
+            }
+
+            currentSongId = id;
+        }
+
+        // Слушаем окончание песни
+        currentPlayer.addEventListener('ended', function() {
+            document.querySelectorAll('.play-btn').forEach(function(btn) {
+                btn.textContent = '▶️';
+                btn.classList.remove('playing');
+            });
+            currentTitle.textContent = 'Выберите песню';
+            currentSongId = null;
+        });
+
+        // Загружаем список песен
+        window.onload = function() {
+            setTimeout(loadSongs, 500);
+        };
+    </script>
+</body>
+</html>
