@@ -2,7 +2,7 @@ name: Уведомления о событиях
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Каждые 5 минут
+    - cron: '*/30 * * * *'  # Каждые 5 минут
   workflow_dispatch:
 
 jobs:
