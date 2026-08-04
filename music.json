@@ -1,16 +1,21 @@
 {
-  "songs": [
+  "albums": [
     {
-      "id": 1,
-      "title": "Молот ОПЛОТа",
-      "file": "Music/«Молот ОПЛОТа».mp3",
-      "description": ""
-    },
-    {
-      "id": 2,
-      "title": "Сага о торговце",
-      "file": "Music/«Сага о торговце».mp3",
-      "description": ""
+      "name": "«ОПЛОТ — Северный ветер»",
+      "year": 2026,
+      "cover": "images/music/default_cover.jpg",
+      "songs": [
+        {
+          "title": "Молот ОПЛОТа",
+          "description": "Главный гимн гильдии",
+          "file": "Music/«Молот ОПЛОТа».mp3"
+        },
+        {
+          "title": "Сага о торговце",
+          "description": "Морская баллада",
+          "file": "Music/«Сага о торговце».mp3"
+        }
+      ]
     }
   ]
 }
