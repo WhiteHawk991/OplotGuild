@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
-     body {
+        body {
             background: linear-gradient(rgba(10, 10, 21, 0.75), rgba(10, 10, 21, 0.85)), url('images/rules.jpg') center/cover no-repeat fixed;
             background-size: cover;
             min-height: 100vh;
@@ -20,74 +20,184 @@
             margin: 0;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px 25px;
+            background: rgba(10, 10, 21, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        h1 {
+            color: #c9a84c;
+            text-align: center;
+            font-size: 2.8rem;
+            border-bottom: 2px solid #c9a84c;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-family: 'Georgia', serif;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
         }
         h2 {
             color: #c9a84c;
-            border-bottom: 2px solid #c9a84c;
-            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(201, 168, 76, 0.3);
+            padding-bottom: 8px;
+            margin-top: 30px;
         }
-        .rules-box {
-            background: var(--card-bg);
-            padding: 25px;
+        .section-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #d0c8b0;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
-            border: 1px solid #c9a84c;
+            border-left: 3px solid #c9a84c;
+        }
+        /* Аккордеон (раскрывающиеся списки) */
+        .accordion {
             margin: 20px 0;
         }
-        .rules-box ol {
-            font-size: 1.1rem;
-            line-height: 2;
+        .accordion-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
         }
-        .rules-box ol li strong {
+        .accordion-header {
+            background: rgba(201, 168, 76, 0.08);
+            padding: 14px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #c9a84c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+            user-select: none;
+        }
+        .accordion-header:hover {
+            background: rgba(201, 168, 76, 0.15);
+        }
+        .accordion-header .arrow {
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+        .accordion-header.open .arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            color: #d0c8b0;
+            line-height: 1.7;
+        }
+        .accordion-body.open {
+            padding: 15px 20px;
+            max-height: 800px;
+        }
+        .accordion-body ul {
+            padding-left: 20px;
+        }
+        .accordion-body ul li {
+            margin-bottom: 8px;
+        }
+        .accordion-body ul li strong {
             color: #c9a84c;
         }
-        .form-box {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #c9a84c;
-            max-width: 500px;
+        /* Форма заявки (свиток) */
+        .scroll-form {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(201, 168, 76, 0.3);
+            border-radius: 15px;
+            box-shadow: inset 0 0 40px rgba(201, 168, 76, 0.05);
+            position: relative;
         }
-        .form-box input[type="text"],
-        .form-box input[type="checkbox"] {
-            width: 100%;
-            padding: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid #c9a84c;
-            border-radius: 5px;
-            margin-bottom: 15px;
+        .scroll-form::before {
+            content: '⚓';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            background: #0a0a15;
+            padding: 0 15px;
+            color: #c9a84c;
         }
-        .form-box label {
+        .scroll-form h3 {
+            color: #c9a84c;
+            text-align: center;
+            font-size: 1.8rem;
+            margin-top: 0;
+            font-family: 'Georgia', serif;
+        }
+        .scroll-form label {
             display: block;
             margin-bottom: 5px;
             color: #c9a84c;
+            font-weight: 500;
         }
-        .form-box .checkbox-label {
+        .scroll-form input[type="text"],
+        .scroll-form input[type="checkbox"] {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(10, 10, 21, 0.7);
+            color: #e0d6b0;
+            border: 1px solid #c9a84c;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        .scroll-form input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .scroll-form .checkbox-label {
             display: inline;
-            margin-left: 10px;
+            color: #d0c8b0;
         }
         .btn-submit {
             background: #c9a84c;
             color: #1a1a2e;
             font-weight: bold;
-            padding: 12px 30px;
-            border-radius: 30px;
+            padding: 14px 40px;
+            border-radius: 50px;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: 0.3s;
+            width: 100%;
+            letter-spacing: 1px;
         }
         .btn-submit:hover {
             background: #e0d6b0;
-            transform: scale(1.05);
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+        }
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .message.success {
+            background: #2d6a4f;
+            color: #d8f3dc;
+        }
+        .message.error {
+            background: #6a1e1e;
+            color: #ffcccc;
         }
         .btn-back {
             display: inline-block;
-            margin-top: 20px;
-            padding: 10px 25px;
+            margin-top: 25px;
+            padding: 10px 30px;
             background: transparent;
             color: #c9a84c;
             border: 1px solid #c9a84c;
@@ -99,18 +209,17 @@
             background: #c9a84c;
             color: #0a0a15;
         }
-        .message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .message.success {
-            background: #2d6a4f;
-            color: #d8f3dc;
-        }
-        .message.error {
-            background: #6a1e1e;
-            color: #ffcccc;
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+                margin: 15px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .scroll-form {
+                padding: 20px 15px;
+            }
         }
     </style>
 </head>
@@ -118,22 +227,89 @@
     <div id="menu-container"></div>
 
     <div class="container">
-        <h2>📜 Правила гильдии ОПЛОТ</h2>
+        <h1>⚓ ОПЛОТ</h1>
 
-        <div class="rules-box">
-            <ol>
-                <li><strong>Честь и уважение:</strong> Играем честно, без читов. Уважаем союзников и противников.</li>
-                <li><strong>Активность:</strong> Минимум 2 совместных рейда в неделю. Если пропускаете — предупреждаем в lolk.</li>
-                <li><strong>Связь:</strong> Обязательное присутствие в голосовом канале lolk во время боевых выходов.</li>
-                <li><strong>Дисциплина:</strong> В бою слушаем капитана или старпома. Своеволие только в разведке.</li>
-                <li><strong>Возраст:</strong> От 18 лет. Молодые мичманы — только по личному поручительству.</li>
-                <li><strong>Взаимопомощь:</strong> Если кто-то в беде (отбился, тонет) — обязаны помочь, даже ценой своего корабля.</li>
-            </ol>
+        <!-- ОПИСАНИЕ ГИЛЬДИИ -->
+        <div class="section-desc">
+            <p><strong>ОПЛОТ</strong> — это не просто гильдия в мире WOSB. Это братство торговцев, моряков и искателей приключений, которые держатся вместе. Мы не просто возим товары — мы создаём торговые пути, защищаем союзников и строим империю. Наша сила — в честном слове, крепкой дружбе и общем деле.</p>
+            <p>Мы верим, что победа — это когда все вернулись домой с полными трюмами и чистой совестью. Присоединяйся к нам, если готов торговать, сражаться и строить будущее вместе.</p>
         </div>
 
-        <h3 style="color: #c9a84c; margin-top: 30px;">✍️ Подать заявку</h3>
+        <!-- РАЗДЕЛ ПРАВИЛ (АККОРДЕОН) -->
+        <h2>📜 Устав гильдии</h2>
+        <div class="accordion">
 
-        <div class="form-box">
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>⚔️ Статья 1. Честь и уважение</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>1.1.</strong> Мы играем честно. Использование сторонних программ, дающих преимущество, запрещено.</p>
+                    <p><strong>1.2.</strong> Уважение к союзникам и противникам — основа нашей репутации. Оскорбления и токсичность недопустимы.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>⏳ Статья 2. Активность и участие</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>2.1.</strong> Минимум <strong>2 совместных рейда</strong> в неделю. Если вы не можете участвовать — предупредите в канале Lolk.</p>
+                    <p><strong>2.2.</strong> Долгое отсутствие без предупреждения может привести к исключению из гильдии.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>📡 Статья 3. Связь</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>3.1.</strong> Обязательное присутствие в голосовом канале Lolk во время боевых выходов.</p>
+                    <p><strong>3.2.</strong> Для обсуждения тактик и оперативных задач используйте текстовые каналы.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>🎯 Статья 4. Дисциплина в бою</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>4.1.</strong> В бою слушаем капитана или старпома. Своеволие допустимо только в разведке и при выполнении особых задач.</p>
+                    <p><strong>4.2.</strong> Не покидайте строй без приказа.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>📅 Статья 5. Возраст и поручительство</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>5.1.</strong> Возраст кандидатов — от 18 лет.</p>
+                    <p><strong>5.2.</strong> Молодые мичманы (до 18 лет) принимаются только по личному поручительству действующего члена гильдии.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>🤝 Статья 6. Взаимопомощь</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-body">
+                    <p><strong>6.1.</strong> Если кто-то из гильдии в беде (отбился, тонет, попал в засаду) — обязаны помочь, даже ценой своего корабля.</p>
+                    <p><strong>6.2.</strong> Мы не оставляем своих.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ФОРМА ЗАЯВКИ (СВИТОК) -->
+        <div class="scroll-form">
+            <h3>✍️ Подать заявку</h3>
             <form id="applicationForm" onsubmit="submitForm(event)">
                 <label>Ваш ник в WOSB:</label>
                 <input type="text" id="nickname" required />
@@ -145,18 +321,42 @@
                 <input type="text" id="rank" />
 
                 <input type="checkbox" id="agreed" required />
-                <label class="checkbox-label">Я ознакомлен(а) и согласен(на) с правилами гильдии</label>
+                <label class="checkbox-label">Я ознакомлен(а) и согласен(на) с уставом гильдии</label>
 
                 <br /><br />
                 <button type="submit" class="btn-submit">🚀 Отправить заявку</button>
             </form>
             <div id="message" class="message" style="display: none;"></div>
         </div>
+
+        <div style="text-align: center;">
+            <a href="/OplotGuild/" class="btn-back">← На главную</a>
+        </div>
     </div>
 
     <script src="menu.js"></script>
     <script>
-        // URL вебхука Lolk (заявки)
+        // Аккордеон
+        function toggleAccordion(header) {
+            var body = header.nextElementSibling;
+            var isOpen = body.classList.contains('open');
+            // Закрываем все
+            document.querySelectorAll('.accordion-body').forEach(function(el) {
+                el.classList.remove('open');
+                el.style.maxHeight = '0';
+            });
+            document.querySelectorAll('.accordion-header').forEach(function(el) {
+                el.classList.remove('open');
+            });
+            // Открываем, если был закрыт
+            if (!isOpen) {
+                body.classList.add('open');
+                body.style.maxHeight = body.scrollHeight + 'px';
+                header.classList.add('open');
+            }
+        }
+
+        // Отправка формы (как было)
         var webhookUrl = "https://lolka.app/api/webhooks/819153661936640/ODE5MTUzNjYxOTM2NjQw.kj6o0Hyh33V7p15sglL-tABDQJ7vFgHTkMamcvTuPSA";
 
         function submitForm(event) {
@@ -174,7 +374,7 @@
             }
 
             if (!agreed) {
-                showMessage(messageDiv, '❌ Вы должны согласиться с правилами!', 'error');
+                showMessage(messageDiv, '❌ Вы должны согласиться с уставом!', 'error');
                 return;
             }
 
@@ -200,7 +400,10 @@
             .then(response => {
                 if (response.ok) {
                     showMessage(messageDiv, '✅ Заявка успешно отправлена! Мы свяжемся с вами в Lolk в течение 24 часов.', 'success');
-                    resetForm();
+                    document.getElementById('nickname').value = '';
+                    document.getElementById('discordNick').value = '';
+                    document.getElementById('rank').value = '';
+                    document.getElementById('agreed').checked = false;
                 } else {
                     return response.text().then(text => {
                         throw new Error(`Ошибка сервера (${response.status}): ${text}`);
@@ -209,7 +412,7 @@
             })
             .catch(error => {
                 console.error('Ошибка отправки:', error);
-                showMessage(messageDiv, `❌ Не удалось отправить заявку. Ошибка: ${error.message || 'Попробуйте позже или свяжитесь с нами вручную.'}`, 'error');
+                showMessage(messageDiv, `❌ Не удалось отправить заявку. Ошибка: ${error.message || 'Попробуйте позже.'}`, 'error');
             });
         }
 
@@ -217,13 +420,6 @@
             element.style.display = 'block';
             element.className = 'message ' + type;
             element.textContent = text;
-        }
-
-        function resetForm() {
-            document.getElementById('nickname').value = '';
-            document.getElementById('discordNick').value = '';
-            document.getElementById('rank').value = '';
-            document.getElementById('agreed').checked = false;
         }
     </script>
 </body>
