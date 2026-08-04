@@ -57,14 +57,9 @@
             color: #0a0a15;
             border-color: #c9a84c;
         }
-        /* Группы по типам */
         .ship-type-group {
             margin-bottom: 30px;
             text-align: left;
-            display: none;
-        }
-        .ship-type-group.visible {
-            display: block;
         }
         .ship-type-group > h2 {
             color: #c9a84c;
@@ -283,6 +278,7 @@
 
         <!-- Уровни (ранги) -->
         <div class="levels-bar" id="levelsBar">
+            <button class="level-btn active" data-level="all">Все</button>
             <button class="level-btn" data-level="7">VII</button>
             <button class="level-btn" data-level="6">VI</button>
             <button class="level-btn" data-level="5">V</button>
@@ -333,7 +329,6 @@
         var allShips = [];
         var comparedShips = [];
         var typeOrder = ['Быстроходные', 'Боевые', 'Транспортные', 'Осадные', 'Тяжелые', 'Имперские', 'Премиум'];
-        var currentLevel = null;
 
         // ============================================================
         // 2. ЗАГРУЗКА
@@ -349,85 +344,85 @@
                 })
                 .then(data => {
                     allShips = data.ships || [];
-                    container.innerHTML = '';
-                    if (allShips.length === 0) {
-                        container.innerHTML = '<div class="empty-message">📭 Нет данных о кораблях.</div>';
-                        return;
-                    }
-
-                    // Группируем по типам
-                    var groupsByType = {};
-                    allShips.forEach(function(ship) {
-                        var type = ship.type || 'Другие';
-                        if (!groupsByType[type]) groupsByType[type] = [];
-                        groupsByType[type].push(ship);
-                    });
-
-                    var sortedTypes = Object.keys(groupsByType).sort(function(a, b) {
-                        return typeOrder.indexOf(a) - typeOrder.indexOf(b);
-                    });
-
-                    // Для каждого типа создаём блок
-                    sortedTypes.forEach(function(type) {
-                        var shipsOfType = groupsByType[type];
-                        var typeDiv = document.createElement('div');
-                        typeDiv.className = 'ship-type-group';
-                        typeDiv.dataset.type = type;
-
-                        var typeHeader = document.createElement('h2');
-                        typeHeader.textContent = type + ' (' + shipsOfType.length + ')';
-                        typeDiv.appendChild(typeHeader);
-
-                        var grid = document.createElement('div');
-                        grid.className = 'ship-grid';
-
-                        // Сортируем корабли по уровню (от высшего к низшему)
-                        shipsOfType.sort(function(a, b) { return (b.level || 0) - (a.level || 0); });
-
-                        shipsOfType.forEach(function(ship) {
-                            var card = document.createElement('div');
-                            card.className = 'ship-card';
-                            card.dataset.shipKey = ship.name;
-                            card.dataset.level = ship.level || 0;
-                            var imgSrc = ship.image || 'images/ships/default.png';
-                            var isCompared = comparedShips.some(s => s.name === ship.name);
-                            card.innerHTML = `
-                                <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
-                                <div class="name">${ship.name}</div>
-                                <div class="level">Уровень ${ship.level || '?'}</div>
-                                <div class="stats">
-                                    <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
-                                    <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
-                                    <span><span class="label">🔄 Маневр.</span><span class="val">${ship.maneuverability || '?'}</span></span>
-                                    <span><span class="label">🛡️ Броня</span><span class="val">${ship.armor || '?'}</span></span>
-                                    <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
-                                    <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
-                                    <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
-                                </div>
-                                <button class="compare-btn ${isCompared ? 'active' : ''}" onclick="toggleCompare('${ship.name}')">${isCompared ? '✓ В сравнении' : '+ Сравнить'}</button>
-                            `;
-                            grid.appendChild(card);
-                        });
-
-                        typeDiv.appendChild(grid);
-                        container.appendChild(typeDiv);
-                    });
-
-                    // Настройка фильтра по уровням
-                    setupLevelFilter();
-                    // Показываем все уровни по умолчанию
-                    document.querySelectorAll('.ship-type-group').forEach(function(el) {
-                        el.classList.add('visible');
-                    });
-                    // Подсвечиваем кнопку "Все"
-                    document.querySelectorAll('.level-btn').forEach(function(btn) {
-                        btn.classList.remove('active');
-                    });
+                    renderShips();
                 })
                 .catch(error => {
                     console.error('Ошибка загрузки кораблей:', error);
                     container.innerHTML = '<div class="empty-message">⚠️ Не удалось загрузить корабли. Проверьте файл ships.json.</div>';
                 });
+        }
+
+        function renderShips() {
+            var container = document.getElementById('shipsContainer');
+            container.innerHTML = '';
+            if (allShips.length === 0) {
+                container.innerHTML = '<div class="empty-message">📭 Нет данных о кораблях.</div>';
+                return;
+            }
+
+            var currentLevel = getCurrentLevel();
+
+            // Группируем по типам
+            var groupsByType = {};
+            allShips.forEach(function(ship) {
+                // Пропускаем корабли не того уровня
+                if (currentLevel !== 'all' && ship.level != currentLevel) return;
+                var type = ship.type || 'Другие';
+                if (!groupsByType[type]) groupsByType[type] = [];
+                groupsByType[type].push(ship);
+            });
+
+            var sortedTypes = Object.keys(groupsByType).sort(function(a, b) {
+                return typeOrder.indexOf(a) - typeOrder.indexOf(b);
+            });
+
+            sortedTypes.forEach(function(type) {
+                var ships = groupsByType[type];
+                var typeDiv = document.createElement('div');
+                typeDiv.className = 'ship-type-group';
+
+                var typeHeader = document.createElement('h2');
+                typeHeader.textContent = type + ' (' + ships.length + ')';
+                typeDiv.appendChild(typeHeader);
+
+                var grid = document.createElement('div');
+                grid.className = 'ship-grid';
+
+                ships.sort(function(a, b) { return (b.level || 0) - (a.level || 0); });
+
+                ships.forEach(function(ship) {
+                    var card = document.createElement('div');
+                    card.className = 'ship-card';
+                    card.dataset.shipKey = ship.name;
+                    var imgSrc = ship.image || 'images/ships/default.png';
+                    var isCompared = comparedShips.some(s => s.name === ship.name);
+                    card.innerHTML = `
+                        <img src="${imgSrc}" alt="${ship.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 80%22%3E%3Cpath d=%22M10 70 L90 70 L80 50 L20 50 L10 70 Z%22 fill=%22%23c9a84c%22 opacity=%220.6%22/%3E%3Cpath d=%22M30 50 L40 20 L60 20 L70 50 Z%22 fill=%22%23e0d6b0%22 opacity=%220.7%22/%3E%3C/svg%3E'" />
+                        <div class="name">${ship.name}</div>
+                        <div class="level">Уровень ${ship.level || '?'}</div>
+                        <div class="stats">
+                            <span><span class="label">💪 Прочность</span><span class="val">${ship.durability || '?'}</span></span>
+                            <span><span class="label">⚡ Скорость</span><span class="val">${ship.speed || '?'}</span></span>
+                            <span><span class="label">🔄 Маневр.</span><span class="val">${ship.maneuverability || '?'}</span></span>
+                            <span><span class="label">🛡️ Броня</span><span class="val">${ship.armor || '?'}</span></span>
+                            <span><span class="label">📦 Трюм</span><span class="val">${ship.cargo || '?'}</span></span>
+                            <span><span class="label">👥 Экипаж</span><span class="val">${ship.crew || '?'}</span></span>
+                            <span><span class="label">🔫 Орудия</span><span class="val">${ship.guns || '?'}</span></span>
+                        </div>
+                        <button class="compare-btn ${isCompared ? 'active' : ''}" onclick="toggleCompare('${ship.name}')">${isCompared ? '✓ В сравнении' : '+ Сравнить'}</button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                typeDiv.appendChild(grid);
+                container.appendChild(typeDiv);
+            });
+        }
+
+        function getCurrentLevel() {
+            var activeBtn = document.querySelector('.level-btn.active');
+            if (!activeBtn) return 'all';
+            return activeBtn.dataset.level;
         }
 
         // ============================================================
@@ -437,33 +432,9 @@
             var buttons = document.querySelectorAll('.level-btn');
             buttons.forEach(function(btn) {
                 btn.addEventListener('click', function() {
-                    var level = parseInt(this.dataset.level);
-                    // Снимаем активность со всех кнопок
                     buttons.forEach(function(b) { b.classList.remove('active'); });
                     this.classList.add('active');
-
-                    // Показываем/скрываем группы по типам
-                    document.querySelectorAll('.ship-type-group').forEach(function(group) {
-                        var cards = group.querySelectorAll('.ship-card');
-                        var hasVisible = false;
-                        cards.forEach(function(card) {
-                            var cardLevel = parseInt(card.dataset.level);
-                            if (cardLevel === level) {
-                                card.style.display = '';
-                                hasVisible = true;
-                            } else {
-                                card.style.display = 'none';
-                            }
-                        });
-                        // Показываем группу, если в ней есть видимые карточки
-                        group.style.display = hasVisible ? 'block' : 'none';
-                        // Обновляем заголовок группы, если она видна
-                        if (hasVisible) {
-                            group.classList.add('visible');
-                        } else {
-                            group.classList.remove('visible');
-                        }
-                    });
+                    renderShips();
                 });
             });
         }
@@ -486,14 +457,7 @@
                 comparedShips.push(ship);
             }
             updateCompareUI();
-            document.querySelectorAll('.ship-card').forEach(function(card) {
-                var btn = card.querySelector('.compare-btn');
-                if (!btn) return;
-                var name = card.dataset.shipKey;
-                var isCompared = comparedShips.some(s => s.name === name);
-                btn.textContent = isCompared ? '✓ В сравнении' : '+ Сравнить';
-                btn.classList.toggle('active', isCompared);
-            });
+            renderShips();
         }
 
         function updateCompareUI() {
@@ -557,7 +521,10 @@
         // 5. ЗАПУСК
         // ============================================================
         window.onload = function() {
-            setTimeout(loadShips, 300);
+            setTimeout(function() {
+                loadShips();
+                setupLevelFilter();
+            }, 300);
         };
     </script>
 </body>
