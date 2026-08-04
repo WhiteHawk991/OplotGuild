@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,100 +7,158 @@
     <base href="/OplotGuild/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/theme.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
-</head>
-
-<body>
-    <!-- МЕНЮ -->
-    <nav style="
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        padding: 15px 20px;
-        background: rgba(10, 10, 21, 0.9);
-        border-bottom: 2px solid #c9a84c;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    ">
-        <a href="/OplotGuild/" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">
-            🏠 Главная
-        </a>
-        <a href="/OplotGuild/rules.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            📜 Правила
-        </a>
-        <a href="/OplotGuild/builds.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            ⚓ Билды 🔒
-        </a>
-        <a href="/OplotGuild/tips.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">
-            📖 Советы 🔒
-        </a>
-        <a href="/OplotGuild/links.html" style="color: #e0d6b0; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s;">🔗 Ссылки</a>
-     <a href="/OplotGuild/officer.html" style="color: #c9a84c; text-decoration: none; font-size: 1.1rem; padding: 5px 15px; border-radius: 5px; transition: 0.3s; border-bottom: 2px solid #c9a84c;">👑 Офицерская</a>
-    </nav>
-   
-
-    <div id="app">
-        <div class="main-page" style="
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('images/OplotImageHome.png') center/contain no-repeat;
+    <style>
+        /* Стили для главной страницы */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .main-page {
             min-height: 70vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            color: #e0d6b0;
+            color: var(--text-primary);
             padding: 40px 20px;
             border-radius: 10px;
-        ">
-            <h2 style="font-size: 2rem; text-shadow: 2px 2px 6px rgba(0,0,0,0.9); margin-bottom: 30px; color: #c9a84c;">
-                Стоим насмерть
-            </h2>
-            <div style="max-width: 700px; font-size: 1.2rem; line-height: 1.8; background: rgba(0,0,0,0.6); padding: 30px; border-radius: 15px; border: 1px solid #c9a84c;">
-                <p>
-                    <strong>ОПЛОТ</strong> — это гильдия ветеранов WOSB, где честь и братство важнее рейтинга.
-                </p>
-                <p>
-                    Мы сражаемся как единый механизм, прикрываем спины друг друга и не бросаем своих в бою.
-                </p>
-                <p style="font-style: italic; color: #c9a84c; margin-top: 15px;">
-                    «Победа — это когда все вернулись домой».
-                </p>
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('images/OplotImageHome.png') center/contain no-repeat;
+        }
+        .main-page h2 {
+            font-size: 2rem;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.9);
+            margin-bottom: 30px;
+            color: #c9a84c;
+        }
+        .main-page .description {
+            max-width: 700px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            background: rgba(0,0,0,0.6);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #c9a84c;
+        }
+        .main-page .description strong {
+            color: #c9a84c;
+        }
+        .main-page .description .quote {
+            font-style: italic;
+            color: #c9a84c;
+            margin-top: 15px;
+        }
+        .btn-gold {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: #c9a84c;
+            color: #1a1a2e;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            border: 2px solid #e0d6b0;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .btn-gold:hover {
+            background: #e0d6b0;
+            transform: scale(1.05);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .stat-item {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #c9a84c;
+        }
+        .stat-item .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #c9a84c;
+        }
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-container"></div>
+
+    <div class="container">
+        <div class="main-page">
+            <h2>Стоим насмерть</h2>
+            <div class="description">
+                <p><strong>ОПЛОТ</strong> — это гильдия ветеранов WOSB, где честь и братство важнее рейтинга.</p>
+                <p>Мы сражаемся как единый механизм, прикрываем спины друг друга и не бросаем своих в бою.</p>
+                <p class="quote">«Победа — это когда все вернулись домой».</p>
             </div>
             
-            <a href="/OplotGuild/rules.html" class="btn" style="
-                margin-top: 30px;
-                padding: 15px 40px;
-                background: #c9a84c;
-                color: #1a1a2e;
-                font-weight: bold;
-                text-decoration: none;
-                border-radius: 30px;
-                font-size: 1.2rem;
-                border: 2px solid #e0d6b0;
-                display: inline-block;
-            ">
-                ⚔️ Вступить в ряды
-            </a>
+            <a href="/OplotGuild/rules.html" class="btn-gold">⚔️ Вступить в ряды</a>
+
+            <!-- Счётчик и статистика -->
+            <div class="stats-grid" id="stats-container">
+                <div class="stat-item">
+                    <div class="number" id="stat-builds">⏳</div>
+                    <div class="label">Билдов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="stat-events">⏳</div>
+                    <div class="label">Событий</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="stat-members">⏳</div>
+                    <div class="label">Участников</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-
+    <script src="menu.js"></script>
     <script>
-        // Восстанавливаем путь после перенаправления через 404.html
-        (function() {
-            var redirect = sessionStorage.getItem('redirect');
-            if (redirect && redirect !== '' && redirect !== '/') {
-                sessionStorage.removeItem('redirect');
-                history.replaceState(null, '', redirect);
-            }
-        })();
-    </script>
-    <script src="_framework/blazor.webassembly.js"></script>
-</body>
+        // Загрузка статистики
+        function loadStats() {
+            // Загружаем билды
+            fetch('builds.json?t=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-builds').textContent = data.builds ? data.builds.length : 0;
+                })
+                .catch(() => document.getElementById('stat-builds').textContent = '0');
 
+            // Загружаем события
+            fetch('events.json?t=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('stat-events').textContent = data.events ? data.events.length : 0;
+                })
+                .catch(() => document.getElementById('stat-events').textContent = '0');
+
+            // Загружаем участников (из заявок или просто заглушка)
+            // Пока ставим заглушку
+            document.getElementById('stat-members').textContent = '28';
+        }
+
+        window.onload = function() {
+            // Ждём, пока загрузится меню
+            setTimeout(loadStats, 500);
+        };
+    </script>
+</body>
 </html>
